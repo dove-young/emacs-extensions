@@ -56,19 +56,19 @@
 (setq
   el-get-sources
   '(el-get
-;    auto-complete
-;    browse-kill-ring
-;    buffer-move
+    auto-complete
+    browse-kill-ring
+    buffer-move
 ;    crontab-mode
 ;    csv-mode
-;    psvn
-;    switch-window
-;    yasnippet
-;    emacs-w3m
+    psvn
+    switch-window
+    yasnippet
+    emacs-w3m
 ;
-;    (:name move-text
-;           :type emacswiki
-;           :features move-text)
+    (:name move-text
+           :type emacswiki
+           :features move-text)
 ;    (:name orgmode
 ;           :type git
 ;           :url  "git://orgmode.org/org-mode.git"
@@ -83,7 +83,6 @@
            :info "./org-7.5/doc"
            :build ("cd ./org-7.5; make")
            :load-path ("./org-7.5/lisp")
-;           :load "org-7.5/lisp/org-install.el")
            :features org-install)
 
     (:name haskell-mode
@@ -98,7 +97,7 @@
 ))
 ;(el-get 'sync)
 
-;(el-get)
+(el-get)
 
 ;           :url "http://www.emacswiki.org/emacs/download/move-text.el")
 ;    (:name thing-edit
