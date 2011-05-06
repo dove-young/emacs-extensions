@@ -56,22 +56,49 @@
 (setq
   el-get-sources
   '(el-get
-    auto-complete
-    browse-kill-ring
-    buffer-move
-    crontab-mode
-    csv-mode
-    psvn
-    switch-window
-    yasnippet
-    emacs-w3m
+;    auto-complete
+;    browse-kill-ring
+;    buffer-move
+;    crontab-mode
+;    csv-mode
+;    psvn
+;    switch-window
+;    yasnippet
+;    emacs-w3m
+;
+;    (:name move-text
+;           :type emacswiki
+;           :features move-text)
+;    (:name orgmode
+;           :type git
+;           :url  "git://orgmode.org/org-mode.git"
+;           :build ("make")
+;           :load-path ("./lisp")
+;           :features org-install)
+    (:name orgmode
+           :type http-tar
+           :url "file:///home/dove/.emacs.d/org-7.5.tar.gz"
+;           :url "file://localhost/home/dove/.emacs.d/org-7.5.tar.gz"
+           :options ("xzf")
+           :info "./org-7.5/doc"
+           :build ("cd ./org-7.5; make")
+           :load-path ("./org-7.5/lisp")
+;           :load "org-7.5/lisp/org-install.el")
+           :features org-install)
 
-    (:name move-text
-           :type emacswiki
-           :features move-text)
+    (:name haskell-mode
+         :type http-tar
+         :options ("xzf")
+         :url "file:///home/dove/.emacs.d/haskell-mode-2.8.0.tar.gz"
+;         :url "http://projects.haskell.org/haskellmode-emacs/haskell-mode-2.8.0.tar.gz"
+         :load "haskell-site-file.el"
+         :after (lambda ()
+                  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+                  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
 ))
+;(el-get 'sync)
 
-(el-get)
+;(el-get)
 
 ;           :url "http://www.emacswiki.org/emacs/download/move-text.el")
 ;    (:name thing-edit
