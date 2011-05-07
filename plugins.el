@@ -248,17 +248,80 @@
 
 (add-hook 'emacs-lisp-mode-hook 'set-outline-minor-mode-regexp  t)
 
-(add-hook 'perl-mode-hook 'set-outline-minor-mode-regexp  t)
+(defun my-cperl-customizations ()
+  "cperl-mode customizations that must be done after cperl-mode loads"
+  (outline-minor-mode)
+  (abbrev-mode)
+
+  (defun cperl-outline-level ()
+    (looking-at outline-regexp)
+    (let ((match (match-string 1)))
+      (cond
+       ((eq match "=head1" ) 1)
+       ((eq match "package") 2)
+       ((eq match "=head2" ) 3)
+       ((eq match "=item"  ) 4)
+       ((eq match "sub"    ) 5)
+       (t 7)
+       )))
+
+  (setq cperl-outline-regexp  my-cperl-outline-regexp)
+  (setq outline-regexp        cperl-outline-regexp)
+  (setq outline-level        'cperl-outline-level)
+)
+
+(eval-after-load 'pde-load
+  '(add-hook 'cperl-mode-hook 'my-cperl-customizations))
+
+;(add-hook 'perl-mode-hook 'set-outline-minor-mode-regexp  t)
+
+;(add-hook 'cperl-mode-hook 'outline-minor-mode)
 
 ;(add-hook 'cperl-mode-hook (lambda ()
 ;                             (outline-minor-mode 1)) )
 
-(setq cperl-mode-hook 'my-cperl-customizations)
+;(setq cperl-mode-hook 'my-cperl-customizations)
 
-(defun my-cperl-customizations ()
-  "cperl-mode customizations that must be done after cperl-mode loads"
-  (outline-minor-mode)
-)
+;(defun my-cperl-customizations ()
+;  "cperl-mode customizations that must be done after cperl-mode loads"
+;  (outline-minor-mode)
+;)
+
+
+;    ;; Make locals out of these variables.
+;    ;; Add or delete from the vector, redefine the function.
+;    ;; Any hook that runs this is instantly updated.
+;    (defun vls-set-local-variables ()
+;      (let ((locals [column-number-mode 
+;                     fill-individual-varying-indent
+;                     colon-double-space
+;                     hippie-expand-try-functions-list]))
+;        (mapc (lambda (x) (make-local-variable x)) locals)))
+;    
+;    (defun vls-text-mode-hook ()
+;      (vls-set-local-variables)
+;      (turn-on-auto-fill)
+;      (column-number-mode 1)
+;      (setq fill-individual-varying-indent t
+;            colon-double-space t
+;            fill-column 65
+;            abbrev-mode t
+;            hippie-expand-try-functions-list '(try-expand-dabbrev
+;                                               try-expand-line
+;                                               try-complete-file-name)))
+;    
+;    (add-hook 'text-mode-hook 'vls-text-mode-hook)
+
+;(defun dove-perl-pde-mode-hook ()
+;  (outline-minor-mode 1))
+
+;(fset 'perl-mode 'cperl-mode)
+
+;(add-hook 'cperl-mode-hook 'dove-perl-pde-mode-hook)
+;(add-hook 'cperl-mode-hook 
+;          (lambda ()
+;            (outline-minor-mode 1)))
+
 
 ;(defadvice pde-perl-mode-hook (after enable-outline () activate) 
 ;                                     (outline-minor-mode t)
