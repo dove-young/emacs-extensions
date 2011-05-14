@@ -1,45 +1,28 @@
 
 
-(setq outline-minor-mode-list 
-      (list '(emacs-lisp-mode "(defun")
-	    '(shell-mode ".*[bB]ash.*[#\$] ")
-	    '(sh-mode "function .*{")
-	    '(perl-mode "sub ")
-;	    '(cperl-mode "sub ")
-
- ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;(add-to-list 'load-path "~/Shell/config/emacs.el")
-;(add-to-list 'load-path "/usr/share/emacs/site-lisp/bbdb")
+(setq dove-init-path "~/.emacs.d/")
 
-(require-extensions 'require
- (list 
-  'tabbar 
-;  'switch-window
-;  'thing-edit
-;  'second-sel
-;  'browse-kill-ring+
-;  'bbdb
-;  'gnuplot
-;  'muse-mode
-;  'ibuffer
-;  'w3m-load
-;  'rect-mark
-;  'ido
-;  'multi-term
-;  'lusty-explorer
-;  'oddmuse
-;  'emaci
-;  'move-text
-;  'uniquify
-;  'hide-region
-;  'ede
-  'icicles
-  'session
-;  'el-get
-))
+; (action-to-list (lambda(p) (add-to-list 'load-path (concat dove-init-path p "/")))
+;                  (list
+;                   "bbdb"
+;                   "switch-window"
+;                   "gnuplot"
+;                   "muse-mode"
+; ;                  "icicles.git/icicles"
+;                   )
+; )
+
+(action-to-list 'require 
+                 (list
+                  'tabbar
+                  'session)
+)
+
+;(require 'icicles)
+
 
 
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
@@ -51,7 +34,7 @@
     (end-of-buffer)
     (eval-print-last-sexp))))
  
- (require 'el-get)
+(require 'el-get)
 
 (setq
   el-get-sources
@@ -99,43 +82,42 @@
            :features oddmuse
            :after (lambda () (setq oddmuse-username "DavidYoung"))
            )
-))
-;(el-get 'sync)
 
+    (:name Emacs-PDE
+           :type http-tar
+           :url "file:///home/dove/.emacs.d/Emacs-PDE-0.2.16.tar.gz"
+           :options ("xzf")
+           :info "./lisp/doc"
+           :build ("sed -i -e '/(global-set-key/d' lisp/pde-load.el" "perl Makefile.PL" "make")
+           :load-path ("./lisp")
+           :features pde-load)        
+    (:name icicles
+           :type git
+           :url "git://github.com/emacsmirror/icicles.git"
+           :features icicles
+           :after (lambda() (icy-mode))
+           )
+
+))
+
+;(el-get 'sync)
 (el-get)
 
 
-(bbdb-initialize)
-(global-visual-line-mode 1)
-(tabbar-mode)
-;(icy-mode 1)
-(read-abbrev-file "~/.abbrev_defs")
-(mouse-avoidance-mode 'jump)
-(auto-image-file-mode)
-(show-paren-mode t)
+;;;;;;;;;;;;;;;;;;;;;;;;; hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;
+
+
+(setq outline-minor-mode-list 
+      (list '(emacs-lisp-mode "(defun")
+	    '(shell-mode ".*[bB]ash.*[#\$] ")
+	    '(sh-mode "function .*{")
+	    '(perl-mode "sub ")
+;	    '(cperl-mode "sub ")
+
+ ))
+
 (add-hook 'minibuffer-hook (setq blink-matching-paren nil))
-
-
-;; WinnerMode
-
-(when (fboundp 'winner-mode)
-  (winner-mode)
-  (windmove-default-keybindings))
-
-;; Dictionary
-;(load "dictionary-init")
-;(setq dictionary-use-single-buffer t)
-(display-time)
-(load-library "hideshow")
-;(ido-mode t)
-;     (load "auctex.el" nil t t)
-;     (load "preview-latex.el" nil t t)
-
-;(oddmuse-mode-initialize)
-
-    (when (fboundp 'windmove-default-keybindings)
-      (windmove-default-keybindings))
-
 (eval-after-load 'shell
   '(progn
  (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
@@ -143,8 +125,51 @@
  t
 ))
 
+(add-hook 'shell-mode-hook 'set-outline-minor-mode-regexp t )
 
- (add-hook 'shell-mode-hook 'set-outline-minor-mode-regexp t )
+(add-hook 'sh-mode-hook 'set-outline-minor-mode-regexp t )
+
+(add-hook 'emacs-lisp-mode-hook 'set-outline-minor-mode-regexp  t)
+
+(add-hook 'org-mode-hook
+	  (lambda ()
+	    (define-key icicle-mode-map (kbd "C-c '") 'org-edit-special)))
+
+(add-hook 'lisp-mode-hook
+	  (lambda ()
+	    (define-key icicle-mode-map (kbd "C-c '") 'org-edit-src-exit)))
+
+(add-hook 'after-init-hook 'session-initialize)
+
+(add-hook 'latex-mode-hook
+	  (lambda()
+            (local-set-key "{" 'skeleton-pair-insert-maybe)))
+
+(add-hook 'hs-minor-mode-hook
+  '(lambda ()
+     (setq hs-minor-mode t)
+     (define-key hs-minor-mode-map (quote[f8]) (quote hs-hide-block))
+     (define-key hs-minor-mode-map (quote[(shift f8)]) (quote hs-show-block))
+))
+
+(setq outline-minor-mode-list 
+      (list '(emacs-lisp-mode "(defun")
+	    '(shell-mode ".*[bB]ash.*[#\$] ")
+	    '(sh-mode "function .*{")
+	    '(perl-mode "sub ")
+;	    '(cperl-mode "sub ")
+
+ ))
+
+(add-hook 'minibuffer-hook (setq blink-matching-paren nil))
+(eval-after-load 'shell
+  '(progn
+ (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+ (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
+ t
+))
+
+(add-hook 'shell-mode-hook 'set-outline-minor-mode-regexp t )
 
 (add-hook 'sh-mode-hook 'set-outline-minor-mode-regexp t )
 
@@ -161,7 +186,39 @@
 
 (add-hook 'after-init-hook 'session-initialize)
 
-(load "pde-load")
+
+(add-hook 'latex-mode-hook
+	  (lambda()
+            (local-set-key "{" 'skeleton-pair-insert-maybe)))
+
+(add-hook 'hs-minor-mode-hook
+  '(lambda ()
+     (setq hs-minor-mode t)
+     (define-key hs-minor-mode-map (quote[f8]) (quote hs-hide-block))
+     (define-key hs-minor-mode-map (quote[(shift f8)]) (quote hs-show-block))
+))
+
+;; WinnerMode
+
+(when (fboundp 'winner-mode)
+  (winner-mode)
+  (windmove-default-keybindings))
+
+;; Dictionary
+;(load "dictionary-init")
+;(setq dictionary-use-single-buffer t)
+(load-library "hideshow")
+;(ido-mode t)
+;     (load "auctex.el" nil t t)
+;     (load "preview-latex.el" nil t t)
+
+;(oddmuse-mode-initialize)
+
+    (when (fboundp 'windmove-default-keybindings)
+      (windmove-default-keybindings))
+
+
+;(load "pde-load")
 
 (defun my-cperl-customizations ()
   "cperl-mode customizations that must be done after cperl-mode loads"
@@ -183,6 +240,42 @@
   (setq cperl-outline-regexp  my-cperl-outline-regexp)
   (setq outline-regexp        cperl-outline-regexp)
   (setq outline-level        'cperl-outline-level)
+
+    (local-set-key "\C-m" 'newline-and-indent)
+  (local-set-key "\C-j" 'newline)
+  (local-set-key (kbd "M-'") 'just-one-space)
+  (local-set-key (kbd "C-M-=") 'pde-indent-dwim)
+  ;; nearest key to dabbrev-expand
+  (local-set-key (kbd "M-;") 'hippie-expand)
+  (local-set-key (kbd "C-;") 'comment-dwim)
+  (local-set-key "\C-cf" 'comint-dynamic-complete)
+;  (local-set-key "\C-cs" 'compile-dwim-compile)
+  (local-set-key "\C-cr" 'compile-dwim-run)
+  (local-set-key "\C-ci" 'imenu)
+  (local-set-key "\C-cv" 'imenu-tree)
+  (local-set-key "\C-cj" 'ffap)
+  (local-set-key "\C-ch" 'help-dwim)
+  (local-set-key "\C-xan" 'tempo-forward-mark)
+  (local-set-key "\C-xap" 'tempo-backward-mark)
+  (local-set-key "\C-xam" 'tempo-complete-tag)
+  (local-set-key " " 'tempo-x-space)  (local-set-key "\C-m" 'newline-and-indent)
+  (local-set-key "\C-j" 'newline)
+  (local-set-key (kbd "M-'") 'just-one-space)
+  (local-set-key (kbd "C-M-=") 'pde-indent-dwim)
+  ;; nearest key to dabbrev-expand
+  (local-set-key (kbd "M-;") 'hippie-expand)
+  (local-set-key (kbd "C-;") 'comment-dwim)
+  (local-set-key "\C-cf" 'comint-dynamic-complete)
+  (local-set-key "\C-cs" 'compile-dwim-compile)
+  (local-set-key "\C-cr" 'compile-dwim-run)
+  (local-set-key "\C-ci" 'imenu)
+  (local-set-key "\C-cv" 'imenu-tree)
+  (local-set-key "\C-cj" 'ffap)
+  (local-set-key "\C-ch" 'help-dwim)
+  (local-set-key "\C-xan" 'tempo-forward-mark)
+  (local-set-key "\C-xap" 'tempo-backward-mark)
+  (local-set-key "\C-xam" 'tempo-complete-tag)
+  (local-set-key " " 'tempo-x-space)
 )
 
 (eval-after-load 'pde-load
@@ -193,17 +286,6 @@
 
 ;    (yas/initialize)
 ;    (yas/load-directory "~/.emacs.d/el-get/yasnippet/snippets")
-
-(add-hook 'latex-mode-hook
-	  (lambda()
-	    		 (local-set-key "{" 'skeleton-pair-insert-maybe)))
-
-(add-hook 'hs-minor-mode-hook
-  '(lambda ()
-     (setq hs-minor-mode t)
-     (define-key hs-minor-mode-map (quote[f8]) (quote hs-hide-block))
-     (define-key hs-minor-mode-map (quote[(shift f8)]) (quote hs-show-block))
-))
 
 (eval-after-load 'w3m
   '(progn
@@ -313,6 +395,39 @@ number of bottles, otherwise it starts from 99."
 	      (setq mark-active t))
           (message "No more occurances of \"%s\" in buffer!" region-text))))
 
+;=============================================================================
+;=============================================================================
+
+
+;(add-to-list 'load-path "~/Shell/config/emacs.el")
+;(add-to-list 'load-path "/usr/share/emacs/site-lisp/bbdb")
+
+; (require-extensions 'require
+;  (list 
+;   'tabbar 
+; ;  'switch-window
+; ;  'thing-edit
+; ;  'second-sel
+; ;  'browse-kill-ring+
+; ;  'bbdb
+; ;  'gnuplot
+; ;  'muse-mode
+; ;  'ibuffer
+; ;  'w3m-load
+; ;  'rect-mark
+; ;  'ido
+; ;  'multi-term
+; ;  'lusty-explorer
+; ;  'oddmuse
+; ;  'emaci
+; ;  'move-text
+; ;  'uniquify
+; ;  'hide-region
+; ;  'ede
+; ;  'icicles
+;   'session
+; ;  'el-get
+; ))
 
 
 ;           :url "http://www.emacswiki.org/emacs/download/move-text.el")
