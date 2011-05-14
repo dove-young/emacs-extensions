@@ -831,9 +831,15 @@ When used in shell-mode, it will paste parenthesis on shell prompt by default "
 )
 
 
-(defun require-extensions (action lst)
-  ""
-  (mapcar (lambda(ext) "" (funcall action ext)) lst))
+(defun action-to-list (action lst)
+  "Perform action to each element in the list"
+  (mapcar (lambda(ext) (funcall action ext)) lst))
+
+
+;(defun require-extensions (action lst)
+;  ""
+;  (mapcar (lambda(ext) "" (funcall action ext)) lst))
+
 
 (defun set-key-bindings (action bindingList)
   ""
