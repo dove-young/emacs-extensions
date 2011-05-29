@@ -13,7 +13,7 @@
 (display-time)
 (bbdb-initialize)
 (global-visual-line-mode 1)
-(tabbar-mode)
+;(tabbar-mode)
 ;(icy-mode 1)
 (read-abbrev-file "~/.abbrev_defs")
 (mouse-avoidance-mode 'jump)

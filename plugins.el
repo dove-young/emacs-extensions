@@ -5,111 +5,12 @@
 
 (setq dove-init-path "~/.emacs.d/")
 
-; (action-to-list (lambda(p) (add-to-list 'load-path (concat dove-init-path p "/")))
-;                  (list
-;                   "bbdb"
-;                   "switch-window"
-;                   "gnuplot"
-;                   "muse-mode"
-; ;                  "icicles.git/icicles"
-;                   )
-; )
-
-(action-to-list 'require 
-                 (list
-                  'tabbar
-                  'session)
-)
-
-;(require 'icicles)
-
-
-
-;; So the idea is that you copy/paste this code into your *scratch* buffer,
-;; hit C-j, and you have a working el-get.
-(unless (require 'el-get nil t)
- (url-retrieve
-  "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-  (lambda (s)
-    (end-of-buffer)
-    (eval-print-last-sexp))))
- 
-(require 'el-get)
-
-(setq
-  el-get-sources
-  '(el-get
-    auto-complete
-    browse-kill-ring
-    buffer-move
-;    crontab-mode
-;    csv-mode
-    psvn
-    switch-window
-    yasnippet
-    emacs-w3m
-;
-    (:name move-text
-           :type emacswiki
-           :features move-text)
-;    (:name orgmode
-;           :type git
-;           :url  "git://orgmode.org/org-mode.git"
-;           :build ("make")
-;           :load-path ("./lisp")
-;           :features org-install)
-    (:name orgmode
-           :type http-tar
-           :url "file:///home/dove/.emacs.d/org-7.5.tar.gz"
-;           :url "file://localhost/home/dove/.emacs.d/org-7.5.tar.gz"
-           :options ("xzf")
-           :info "./org-7.5/doc"
-           :build ("cd ./org-7.5; make")
-           :load-path ("./org-7.5/lisp")
-           :features org-install)
-
-    (:name haskell-mode
-         :type http-tar
-         :options ("xzf")
-         :url "file:///home/dove/.emacs.d/haskell-mode-2.8.0.tar.gz"
-;         :url "http://projects.haskell.org/haskellmode-emacs/haskell-mode-2.8.0.tar.gz"
-         :load "haskell-site-file.el"
-         :after (lambda ()
-                  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-                  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
-        (:name oddmuse                  ; the mode used to edit Emacswiki pages
-           :type emacswiki
-           :features oddmuse
-           :after (lambda () (setq oddmuse-username "DavidYoung"))
-           )
-
-    (:name Emacs-PDE
-           :type http-tar
-           :url "file:///home/dove/.emacs.d/Emacs-PDE-0.2.16.tar.gz"
-           :options ("xzf")
-           :info "./lisp/doc"
-           :build ("sed -i -e '/(global-set-key/d' lisp/pde-load.el" "perl Makefile.PL" "make")
-           :load-path ("./lisp")
-           :features pde-load)        
-    (:name icicles
-           :type git
-           :url "git://github.com/emacsmirror/icicles.git"
-           :features icicles
-           :after (lambda() (icy-mode))
-           )
-
-))
-
-;(el-get 'sync)
-(el-get)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
 
-
 (setq outline-minor-mode-list 
-      (list '(emacs-lisp-mode "(defun")
+      (list '(emacs-lisp-mode "(defun\\|(defvar\\|(defcustom\\|(defconst")
 	    '(shell-mode ".*[bB]ash.*[#\$] ")
 	    '(sh-mode "function .*{")
 	    '(perl-mode "sub ")
@@ -117,27 +18,24 @@
 
  ))
 
+(mapc (lambda (mode-name) 
+       (add-hook mode-name  'set-outline-minor-mode-regexp t))
+;       (add-hook (car lst) (nth 1 lst) (nth 2 lst)))
+      '(shell-mode-hook
+        sh-mode-hook
+        emacs-lisp-mode-hook
+        )
+)
+;       '(shell-mode-hook set-outline-minor-mode-regexp t)
+
 (add-hook 'minibuffer-hook (setq blink-matching-paren nil))
+
 (eval-after-load 'shell
   '(progn
  (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
  t
 ))
-
-(add-hook 'shell-mode-hook 'set-outline-minor-mode-regexp t )
-
-(add-hook 'sh-mode-hook 'set-outline-minor-mode-regexp t )
-
-(add-hook 'emacs-lisp-mode-hook 'set-outline-minor-mode-regexp  t)
-
-(add-hook 'org-mode-hook
-	  (lambda ()
-	    (define-key icicle-mode-map (kbd "C-c '") 'org-edit-special)))
-
-(add-hook 'lisp-mode-hook
-	  (lambda ()
-	    (define-key icicle-mode-map (kbd "C-c '") 'org-edit-src-exit)))
 
 (add-hook 'after-init-hook 'session-initialize)
 
@@ -152,51 +50,6 @@
      (define-key hs-minor-mode-map (quote[(shift f8)]) (quote hs-show-block))
 ))
 
-(setq outline-minor-mode-list 
-      (list '(emacs-lisp-mode "(defun")
-	    '(shell-mode ".*[bB]ash.*[#\$] ")
-	    '(sh-mode "function .*{")
-	    '(perl-mode "sub ")
-;	    '(cperl-mode "sub ")
-
- ))
-
-(add-hook 'minibuffer-hook (setq blink-matching-paren nil))
-(eval-after-load 'shell
-  '(progn
- (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
- (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
- t
-))
-
-(add-hook 'shell-mode-hook 'set-outline-minor-mode-regexp t )
-
-(add-hook 'sh-mode-hook 'set-outline-minor-mode-regexp t )
-
-
-(add-hook 'org-mode-hook
-	  (lambda ()
-	    (define-key icicle-mode-map (kbd "C-c '") 'org-edit-special)))
-
-(add-hook 'lisp-mode-hook
-	  (lambda ()
-	    (define-key icicle-mode-map (kbd "C-c '") 'org-edit-src-exit)))
-
-(add-hook 'emacs-lisp-mode-hook 'set-outline-minor-mode-regexp  t)
-
-(add-hook 'after-init-hook 'session-initialize)
-
-
-(add-hook 'latex-mode-hook
-	  (lambda()
-            (local-set-key "{" 'skeleton-pair-insert-maybe)))
-
-(add-hook 'hs-minor-mode-hook
-  '(lambda ()
-     (setq hs-minor-mode t)
-     (define-key hs-minor-mode-map (quote[f8]) (quote hs-hide-block))
-     (define-key hs-minor-mode-map (quote[(shift f8)]) (quote hs-show-block))
-))
 
 ;; WinnerMode
 
@@ -220,6 +73,21 @@
 
 ;(load "pde-load")
 
+
+
+
+(defun goto-next-function (arg)
+                           "find the next function definition"
+                           (interactive)
+;                           (message "regexp = %s" arg)
+;                           (message "%s" (eval arg))
+                           (re-search-forward (eval arg) ))
+(defun goto-prev-function (arg)
+                           "find the previous function definition"
+                           (interactive)
+;                           (message "regexp = %s" arg)
+                           (re-search-backward (eval arg) ))
+
 (defun my-cperl-customizations ()
   "cperl-mode customizations that must be done after cperl-mode loads"
   (outline-minor-mode)
@@ -237,11 +105,25 @@
        (t 7)
        )))
 
-  (setq cperl-outline-regexp  my-cperl-outline-regexp)
+;     (local-set-key "\C-cn" (lambda ()
+;                            "find the next function definition"
+;                            (interactive)
+;                            (re-search-forward outline-regexp )))
+; ;                           (re-search-forward "use \\|sub \\|=head\\|package " )))
+; 
+;     (local-set-key "\C-cp" (lambda ()
+;                            "find the previous function definition"
+;                            (interactive)
+;                            (re-search-backward outline-regexp )))
+; ;                           (re-search-backward "use \\|sub \\|=head\\|package " )))
+
+;  (setq cperl-outline-regexp  my-cperl-outline-regexp)
   (setq outline-regexp        cperl-outline-regexp)
   (setq outline-level        'cperl-outline-level)
 
-    (local-set-key "\C-m" 'newline-and-indent)
+  (local-set-key "\C-cn" (lambda () (interactive) (goto-next-function 'outline-regexp)))
+  (local-set-key "\C-cp" (lambda () (interactive) (goto-prev-function 'outline-regexp)))
+  (local-set-key "\C-m" 'newline-and-indent)
   (local-set-key "\C-j" 'newline)
   (local-set-key (kbd "M-'") 'just-one-space)
   (local-set-key (kbd "C-M-=") 'pde-indent-dwim)
@@ -276,10 +158,11 @@
   (local-set-key "\C-xap" 'tempo-backward-mark)
   (local-set-key "\C-xam" 'tempo-complete-tag)
   (local-set-key " " 'tempo-x-space)
+
 )
 
 (eval-after-load 'pde-load
-  '(add-hook 'cperl-mode-hook 'my-cperl-customizations))
+  '(add-hook 'cperl-mode-hook 'my-cperl-customizations t))
 
 ;    (add-to-list 'load-path "~/.emacs.d/el-get/yasnippet")
 ;    (require 'yasnippet) ;; not yasnippet-bundle
@@ -292,6 +175,29 @@
      (define-key w3m-mode-map "h" 'w3m-previous-buffer)
      (define-key w3m-mode-map "l" 'w3m-next-buffer)
      (define-key w3m-mode-map (kbd "C-w") 'w3m-close-window)))
+
+(add-hook 'emacs-lisp-mode-hook 
+          (lambda ()
+  (local-set-key "\C-cn" (lambda () (interactive) (goto-next-function 'outline-regexp)))
+  (local-set-key "\C-cp" (lambda () (interactive) (goto-prev-function 'outline-regexp)))
+
+;             (local-set-key "\C-cn" (lambda ()
+;                                      "find the next function definition"
+;                                      (interactive)
+;                                      (re-search-forward outline-regexp)
+; ;                                     (re-search-forward "(defun\\|(defvar\\|(defcustom\\|(defconst")
+;                                      ))
+;             (local-set-key "\C-cp" (lambda ()
+;                                      "find the previous function definition"
+;                                      (interactive)
+;                                      (re-search-backward outline-regexp)
+; ;                                     (re-search-backward "(defun\\|(defvar\\|(defcustom\\|(defconst")
+;                                      ))
+            )
+          t
+)
+
+;(setq emacs-lisp-mode-hook nil)
 
 (add-hook 'oddmuse-mode-hook
           (lambda ()
