@@ -34,9 +34,12 @@
 	 '([(shift f9)] hide-region-unhide)
 	 '([f9] hide-region-hide)   
 	 '([f3] artist-mode)
-	 '([M-up] 'move-text-up)
-	 '([M-down] 'move-text-down)
+;	 '([M-up] 'move-text-up)
+;	 '([M-down] 'move-text-down)
 	 '([M-/]   'hippie-expand)
+
+         (list (kbd "<M-up>") 'move-text-up)
+         (list (kbd "<M-down>") 'move-text-down)
 
 	 (list (kbd "<C-f10>") 'rename-buffer)
 	 (list (kbd "C-=")   'set-mark-command)
@@ -114,5 +117,7 @@
 	     (if arg 
 		 (let ((arg (- 0 arg))) (dove-forward-kill-word arg))
 	       (dove-forward-kill-word -1))))
- 
+         ;; tabbar-mode
+         (list (kbd "C-c <C-right>") 'tabbar-forward)
+         (list (kbd "C-c <C-left>" ) 'tabbar-backward)
 ))
