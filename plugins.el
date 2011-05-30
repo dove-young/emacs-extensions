@@ -14,19 +14,16 @@
 	    '(shell-mode ".*[bB]ash.*[#\$] ")
 	    '(sh-mode "function .*{")
 	    '(perl-mode "sub ")
-;	    '(cperl-mode "sub ")
 
  ))
 
 (mapc (lambda (mode-name) 
        (add-hook mode-name  'set-outline-minor-mode-regexp t))
-;       (add-hook (car lst) (nth 1 lst) (nth 2 lst)))
       '(shell-mode-hook
         sh-mode-hook
         emacs-lisp-mode-hook
         )
 )
-;       '(shell-mode-hook set-outline-minor-mode-regexp t)
 
 (add-hook 'minibuffer-hook (setq blink-matching-paren nil))
 
@@ -70,23 +67,33 @@
     (when (fboundp 'windmove-default-keybindings)
       (windmove-default-keybindings))
 
-
-;(load "pde-load")
-
-
-
-
-(defun goto-next-function (arg)
+(defun goto-symbol (arg &optional flag)
                            "find the next function definition"
                            (interactive)
-;                           (message "regexp = %s" arg)
-;                           (message "%s" (eval arg))
-                           (re-search-forward (eval arg) ))
-(defun goto-prev-function (arg)
-                           "find the previous function definition"
-                           (interactive)
-;                           (message "regexp = %s" arg)
-                           (re-search-backward (eval arg) ))
+                           (if (or flag nil)
+                               (re-search-backward (eval arg) )
+                             (re-search-forward (eval arg) ))
+                             )
+
+; (defun goto-prev-function (arg)
+;                            "find the previous function definition"
+;                            (interactive)
+;                            (re-search-backward (eval arg) ))
+
+(eval-after-load 'w3m
+  '(progn
+     (define-key w3m-mode-map "h" 'w3m-previous-buffer)
+     (define-key w3m-mode-map "l" 'w3m-next-buffer)
+     (define-key w3m-mode-map (kbd "C-w") 'w3m-close-window)))
+
+(add-hook 'emacs-lisp-mode-hook 
+          (lambda ()
+  (local-set-key "\C-cn" (lambda () (interactive) (goto-symbol 'outline-regexp)))
+  (local-set-key "\C-cp" (lambda () (interactive) (goto-symbol 'outline-regexp t)))
+
+ ) t )
+
+;(setq emacs-lisp-mode-hook nil)
 
 (defun my-cperl-customizations ()
   "cperl-mode customizations that must be done after cperl-mode loads"
@@ -105,24 +112,13 @@
        (t 7)
        )))
 
-;     (local-set-key "\C-cn" (lambda ()
-;                            "find the next function definition"
-;                            (interactive)
-;                            (re-search-forward outline-regexp )))
-; ;                           (re-search-forward "use \\|sub \\|=head\\|package " )))
-; 
-;     (local-set-key "\C-cp" (lambda ()
-;                            "find the previous function definition"
-;                            (interactive)
-;                            (re-search-backward outline-regexp )))
-; ;                           (re-search-backward "use \\|sub \\|=head\\|package " )))
-
 ;  (setq cperl-outline-regexp  my-cperl-outline-regexp)
   (setq outline-regexp        cperl-outline-regexp)
   (setq outline-level        'cperl-outline-level)
 
-  (local-set-key "\C-cn" (lambda () (interactive) (goto-next-function 'outline-regexp)))
-  (local-set-key "\C-cp" (lambda () (interactive) (goto-prev-function 'outline-regexp)))
+  (local-set-key "\C-cn" (lambda () (interactive) (goto-symbol 'outline-regexp)))
+  (local-set-key "\C-cp" (lambda () (interactive) (goto-symbol 'outline-regexp t)))
+
   (local-set-key "\C-m" 'newline-and-indent)
   (local-set-key "\C-j" 'newline)
   (local-set-key (kbd "M-'") 'just-one-space)
@@ -170,32 +166,6 @@
 ;    (yas/initialize)
 ;    (yas/load-directory "~/.emacs.d/el-get/yasnippet/snippets")
 
-(eval-after-load 'w3m
-  '(progn
-     (define-key w3m-mode-map "h" 'w3m-previous-buffer)
-     (define-key w3m-mode-map "l" 'w3m-next-buffer)
-     (define-key w3m-mode-map (kbd "C-w") 'w3m-close-window)))
-
-(add-hook 'emacs-lisp-mode-hook 
-          (lambda ()
-  (local-set-key "\C-cn" (lambda () (interactive) (goto-next-function 'outline-regexp)))
-  (local-set-key "\C-cp" (lambda () (interactive) (goto-prev-function 'outline-regexp)))
-
-;             (local-set-key "\C-cn" (lambda ()
-;                                      "find the next function definition"
-;                                      (interactive)
-;                                      (re-search-forward outline-regexp)
-; ;                                     (re-search-forward "(defun\\|(defvar\\|(defcustom\\|(defconst")
-;                                      ))
-;             (local-set-key "\C-cp" (lambda ()
-;                                      "find the previous function definition"
-;                                      (interactive)
-;                                      (re-search-backward outline-regexp)
-; ;                                     (re-search-backward "(defun\\|(defvar\\|(defcustom\\|(defconst")
-;                                      ))
-            )
-          t
-)
 
 ;(setq emacs-lisp-mode-hook nil)
 
@@ -305,219 +275,6 @@ number of bottles, otherwise it starts from 99."
 ;=============================================================================
 
 
-;(add-to-list 'load-path "~/Shell/config/emacs.el")
-;(add-to-list 'load-path "/usr/share/emacs/site-lisp/bbdb")
-
-; (require-extensions 'require
-;  (list 
-;   'tabbar 
-; ;  'switch-window
-; ;  'thing-edit
-; ;  'second-sel
-; ;  'browse-kill-ring+
-; ;  'bbdb
-; ;  'gnuplot
-; ;  'muse-mode
-; ;  'ibuffer
-; ;  'w3m-load
-; ;  'rect-mark
-; ;  'ido
-; ;  'multi-term
-; ;  'lusty-explorer
-; ;  'oddmuse
-; ;  'emaci
-; ;  'move-text
-; ;  'uniquify
-; ;  'hide-region
-; ;  'ede
-; ;  'icicles
-;   'session
-; ;  'el-get
-; ))
-
-
-;           :url "http://www.emacswiki.org/emacs/download/move-text.el")
-;    (:name thing-edit
-;           :type EmacsWiki
-;           :features thing-edit)
-;          :url "http://www.emacswiki.org/emacs/thing-edit.el")
-
-;    (:name browse-kill-ring+
-;           :type EmacsWiki
-;           :features browse-kill-ring+)
-; ;          :url "http://www.emacswiki.org/emacs/browse-kill-ring+.el")
-;    (:name rect-mark
-;           :type EmacsWiki
-;           :features rect-mark)
-; ;          :url "http://www.emacswiki.org/emacs/rect-mark.el")
-;    (:name multi-term
-;           :type EmacsWiki
-;           :features multi-term)
-; ;          :url "http://www.emacswiki.org/emacs/multi-term.el")
-;    (:name lusty-explorer
-;           :type EmacsWiki
-;           :features lusty-explorer)
-; ;          :url "http://www.emacswiki.org/emacs/lusty-explorer.el")
-
- ;          :url "http://www.emacswiki.org/emacs/oddmuse.el")
-;   emaci
-;    (:name uniquify
-;           :type EmacsWiki
-;           :features uniquify)
-; ;          :url "http://www.emacswiki.org/emacs/uniquify.el")
-;    (:name hide-region
-;           :type EmacsWiki
-;           :features hide-region)
-; ;          :url "http://www.emacswiki.org/emacs/hide-region.el")
-; ))
-
-
-;(el-get)
-;(el-get 'sync)
-;(when window-system
-;   (add-to-list 'el-get-sources  'color-theme-tango))
-
-;(require 'move-text)
-
-
-
-;; tabbar mode
-
-;(setq tabbar-buffer-list-function 
-;
-;;(funcall
-;      (lambda nil
-;	(setq new-list nil)
-;	(let (( buffers (buffer-list) ))
-;	  (while buffers
-;	    (let (( buffer (pop buffers) ))
-;	      (unless (string-match "\*" (buffer-name buffer)) 
-;		(setq new-list (cons buffer new-list)))
-;	      ))
-;	  new-list ))
-;;      )
-;)
-
-
-;(add-hook 'shell-mode-hook (lambda () (outline-minor-mode 1) (make-local-variable 'outline-regexp)  (setq outline-regexp ".*[bB]ash.*[#\$] ")) t )
-
-;	   (lambda()
-;	     (outline-minor-mode 1)
-;	     (setq outline-regexp ".*[bB]ash.*[#\$] ")
-;	     (set-key-bindings 'local-set-key
-;			       (list
-;			       '([C-c C-t] 'hide-body)
-;			       '([C-c C-a] 'show-all)
-;			       '([C-c C-e] 'show-entry)
-;			       ))) t)
-
-;		 (local-set-key (kbd "C-c C-t") 'hide-body)
-;		 (local-set-key (kbd "C-c C-a") 'show-all)
-;		 (local-set-key (kbd "C-c C-e") 'show-entry)
-;		 )
-;	   t)
-
-
-;(add-hook 'sh-mode-hook (lambda () (outline-minor-mode 1) (make-local-variable 'outline-regexp) (setq outline-regexp "function .*{")) t )
-
-;	  (lambda()
-;	    (outline-minor-mode 1)
-;	    (setq outline-regexp "function")
-;	    (set-key-bindings 'local-set-key
-;			      (list
-;			       '([C-c C-t] 'hide-body)
-;			       '([C-c C-a] 'show-all)
-;			       '([C-c C-e] 'show-entry)
-;			       ))) t)
-
-;	    (local-set-key (kbd "C-c C-t") 'hide-body)
-;	    (local-set-key (kbd "C-c C-a") 'show-all)
-;	    (local-set-key (kbd "C-c C-e") 'show-entry)) t)		    
-
-;(add-hook 'perl-mode-hook 'set-outline-minor-mode-regexp  t)
-
-;(add-hook 'cperl-mode-hook 'outline-minor-mode)
-
-;(add-hook 'cperl-mode-hook (lambda ()
-;                             (outline-minor-mode 1)) )
-
-;(setq cperl-mode-hook 'my-cperl-customizations)
-
-;(defun my-cperl-customizations ()
-;  "cperl-mode customizations that must be done after cperl-mode loads"
-;  (outline-minor-mode)
-;)
-
-
-;    ;; Make locals out of these variables.
-;    ;; Add or delete from the vector, redefine the function.
-;    ;; Any hook that runs this is instantly updated.
-;    (defun vls-set-local-variables ()
-;      (let ((locals [column-number-mode 
-;                     fill-individual-varying-indent
-;                     colon-double-space
-;                     hippie-expand-try-functions-list]))
-;        (mapc (lambda (x) (make-local-variable x)) locals)))
-;    
-;    (defun vls-text-mode-hook ()
-;      (vls-set-local-variables)
-;      (turn-on-auto-fill)
-;      (column-number-mode 1)
-;      (setq fill-individual-varying-indent t
-;            colon-double-space t
-;            fill-column 65
-;            abbrev-mode t
-;            hippie-expand-try-functions-list '(try-expand-dabbrev
-;                                               try-expand-line
-;                                               try-complete-file-name)))
-;    
-;    (add-hook 'text-mode-hook 'vls-text-mode-hook)
-
-;(defun dove-perl-pde-mode-hook ()
-;  (outline-minor-mode 1))
-
-;(fset 'perl-mode 'cperl-mode)
-
-;(add-hook 'cperl-mode-hook 'dove-perl-pde-mode-hook)
-;(add-hook 'cperl-mode-hook 
-;          (lambda ()
-;            (outline-minor-mode 1)))
-
-
-;(defadvice pde-perl-mode-hook (after enable-outline () activate) 
-;                                     (outline-minor-mode t)
-;                                     (message "%s" "this is my advice")
-;                                     )
-
-;(ad-activate 'pde-perl-mode-hook)
-
-;(setq cperl-mode-hook nil)
-;(add-hook 'cperl-mode-hook
-;      '(lambda () (and (setq outline-regexp "sub") (outline-minor-mode +))) )
-
-
-;	  (lambda()
-;	    (outline-minor-mode 1)
-;	    (setq outline-regexp "(defun ")
-;	    (set-key-bindings 'local-set-key
-;			      (list
-;			       '([C-c C-t] 'hide-body)
-;			       '([C-c C-a] 'show-all)
-;			       '([C-c C-e] 'show-entry)
-;			       ))) t)
-
-;	    (local-set-key (kbd "C-c C-t") 'hide-body)
-;	    (local-set-key (kbd "C-c C-a") 'show-all)
-;	    (local-set-key (kbd "C-c C-e") 'show-entry)) t)
-
-;(add-hook 'outline-minor-mode-hook 
-;  '(lambda ()
-;     (define-key outline-minor-mode-map (quote[f4]) (quote hide-subtree))
-;     (define-key outline-minor-mode-map (quote[(shift f4)]) (quote show-children))
-;
-;     (define-key outline-minor-mode-map (quote[f9]) (quote hide-region-hide))
-;     (define-key outline-minor-mode-map (quote[(shift f9)]) (quote hide-region-unhide))
-; ))
 
 ;(defun factorial(n) 
 ;  (if (= n 1) 

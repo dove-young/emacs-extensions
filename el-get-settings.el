@@ -33,7 +33,11 @@
     psvn
     switch-window
     yasnippet
-    emacs-w3m
+    hide-region
+    (:name emacs-w3m
+           :type emacswiki
+           :features w3m-load
+           :after mime-w3m)
     (:name rfc
            :type emacswiki
            :build ("sed -i -e 's/ (require.*w3)/;&/' rfc.el")
@@ -48,13 +52,6 @@
                     (setq rfc-insert-content-url-hook '(rfc-url-save))
                     (add-hook 'rfc-index-mode-hook 'rfcview-mode)))
 
-;    (:name irfc
-;           :type emacswiki
-;           :features irfc
-;           :after (lambda ()
-;                    (setq irfc-directory "~/rfc")
-;                    (setq irfc-assoc-mode t)))
-;
     (:name move-text
            :type emacswiki
            :features move-text)
@@ -84,7 +81,7 @@
          :after (lambda ()
                   (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
                   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
-        (:name oddmuse                  ; the mode used to edit Emacswiki pages
+    (:name oddmuse                  ; the mode used to edit Emacswiki pages
            :type emacswiki
            :features oddmuse
            :after (lambda () 
@@ -113,6 +110,3 @@
 ;(el-get 'sync)
 (el-get)
                             
-         (require 'mime-w3m)
-
-         (require 'w3m-load)
