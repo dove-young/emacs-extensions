@@ -898,6 +898,14 @@ When used in shell-mode, it will paste parenthesis on shell prompt by default "
     )
 )
 
+(defun goto-symbol (arg &optional flag)
+                           "find the next function definition"
+                           (interactive)
+                           (if (or flag nil)
+                               (re-search-backward (eval arg) )
+                             (re-search-forward (eval arg) ))
+                             )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

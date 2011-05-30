@@ -67,19 +67,6 @@
     (when (fboundp 'windmove-default-keybindings)
       (windmove-default-keybindings))
 
-(defun goto-symbol (arg &optional flag)
-                           "find the next function definition"
-                           (interactive)
-                           (if (or flag nil)
-                               (re-search-backward (eval arg) )
-                             (re-search-forward (eval arg) ))
-                             )
-
-; (defun goto-prev-function (arg)
-;                            "find the previous function definition"
-;                            (interactive)
-;                            (re-search-backward (eval arg) ))
-
 (eval-after-load 'w3m
   '(progn
      (define-key w3m-mode-map "h" 'w3m-previous-buffer)
