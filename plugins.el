@@ -164,6 +164,81 @@
               (when (string-match "OddmuseWiki" oddmuse-wiki)
                 (setq oddmuse-post (concat "ham=1;" oddmuse-post))))))
 
+(add-hook 'view-mode-hook
+          (lambda ()
+            (define-key view-mode-map "o" (lambda nil (interactive) (View-scroll-line-backward (/ (window-height) 2))) )
+            (define-key view-mode-map "e" (lambda nil (interactive) (View-scroll-line-forward  (/ (window-height) 2))) )
+            (define-key view-mode-map "j" 'View-scroll-page-forward)
+            (define-key view-mode-map "k" 'View-scroll-page-backward)
+))
+
+; (setq view-mode-hook nil)
+; o was bound to (View-scroll-to-buffer-end)
+; e was bound to (View-exit)
+;
+;;; Define keymap inside defvar to make it easier to load changes.
+;;; Some redundant "less"-like key bindings below have been commented out.
+;(defvar view-mode-map
+;  (let ((map (make-sparse-keymap)))
+;    (define-key map "C" 'View-kill-and-leave)
+;    (define-key map "c" 'View-leave)
+;    (define-key map "Q" 'View-quit-all)
+;    (define-key map "E" 'View-exit-and-edit)
+;    ;; (define-key map "v" 'View-exit)
+;    (define-key map "e" 'View-exit)
+;    (define-key map "q" 'View-quit)
+;    ;; (define-key map "N" 'View-search-last-regexp-backward)
+;    (define-key map "p" 'View-search-last-regexp-backward)
+;    (define-key map "n" 'View-search-last-regexp-forward)
+;    ;; (define-key map "?" 'View-search-regexp-backward) ; Less does this.
+;    (define-key map "\\" 'View-search-regexp-backward)
+;    (define-key map "/" 'View-search-regexp-forward)
+;    (define-key map "r" 'isearch-backward)
+;    (define-key map "s" 'isearch-forward)
+;    (define-key map "m" 'point-to-register)
+;    (define-key map "'" 'register-to-point)
+;    (define-key map "x" 'exchange-point-and-mark)
+;    (define-key map "@" 'View-back-to-mark)
+;    (define-key map "." 'set-mark-command)
+;    (define-key map "%" 'View-goto-percent)
+;    ;; (define-key map "G" 'View-goto-line-last)
+;    (define-key map "g" 'View-goto-line)
+;    (define-key map "=" 'what-line)
+;    (define-key map "F" 'View-revert-buffer-scroll-page-forward)
+;    ;; (define-key map "k" 'View-scroll-line-backward)
+;    (define-key map "y" 'View-scroll-line-backward)
+;    ;; (define-key map "j" 'View-scroll-line-forward)
+;    (define-key map "\n" 'View-scroll-line-forward)
+;    (define-key map "\r" 'View-scroll-line-forward)
+;    (define-key map "u" 'View-scroll-half-page-backward)
+;    (define-key map "d" 'View-scroll-half-page-forward)
+;    (define-key map "z" 'View-scroll-page-forward-set-page-size)
+;    (define-key map "w" 'View-scroll-page-backward-set-page-size)
+;    ;; (define-key map "b" 'View-scroll-page-backward)
+;    (define-key map "\C-?" 'View-scroll-page-backward)
+;    ;; (define-key map "f" 'View-scroll-page-forward)
+;    (define-key map " " 'View-scroll-page-forward)
+;    (define-key map "o" 'View-scroll-to-buffer-end)
+;    (define-key map ">" 'end-of-buffer)
+;    (define-key map "<" 'beginning-of-buffer)
+;    (define-key map "-" 'negative-argument)
+;    (define-key map "9" 'digit-argument)
+;    (define-key map "8" 'digit-argument)
+;    (define-key map "7" 'digit-argument)
+;    (define-key map "6" 'digit-argument)
+;    (define-key map "5" 'digit-argument)
+;    (define-key map "4" 'digit-argument)
+;    (define-key map "3" 'digit-argument)
+;    (define-key map "2" 'digit-argument)
+;    (define-key map "1" 'digit-argument)
+;    (define-key map "0" 'digit-argument)
+;    (define-key map "H" 'describe-mode)
+;    (define-key map "?" 'describe-mode)	; Maybe do as less instead? See above.
+;    (define-key map "h" 'describe-mode)
+;    map))
+;
+
+
 ;; This function was copied from internet
 (defun renumber-list (start end &optional num)
       "Renumber the list items in the current START..END region.

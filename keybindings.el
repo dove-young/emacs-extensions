@@ -108,7 +108,7 @@
 	 (list (kbd "C-c o") 'move-to-the-word)
 	 (list (kbd "C-c O") 'back-to-the-word)
 	 (list (kbd "C-c d") 'duplicate-line)
-	 (list (kbd "C-c c") '(lambda() " " (interactive) (if emaci-mode  (emaci-mode-off) (emaci-mode-on))))
+	 (list (kbd "C-c c") '(lambda() " " (interactive) (if view-mode (View-exit-and-edit) (view-mode))))
 
 	 (list (kbd "M-DEL")
 	   (lambda(&optional arg) 
