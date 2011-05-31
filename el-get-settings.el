@@ -93,7 +93,7 @@
            :url "file:///home/dove/.emacs.d/Emacs-PDE-0.2.16.tar.gz"
            :options ("xzf")
            :info "./lisp/doc"
-           :build ("mv lisp/contrib/tabbar.el{,.bak}" "sed -i -e '/(global-set-key/d' lisp/pde-load.el" "perl Makefile.PL" "make")
+           :build ("rm lisp/contrib/tabbar.el" "sed -i -e '/(global-set-key/d' lisp/pde-load.el" "perl Makefile.PL" "make")
            :load-path ("./lisp")
            :features pde-load)        
     (:name icicles
