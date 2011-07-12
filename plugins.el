@@ -34,7 +34,7 @@
  t
 ))
 
-(add-hook 'after-init-hook 'session-initialize)
+
 
 (add-hook 'latex-mode-hook
 	  (lambda()
@@ -47,6 +47,19 @@
      (define-key hs-minor-mode-map (quote[(shift f8)]) (quote hs-show-block))
 ))
 
+
+     (add-hook 'dired-load-hook
+               (lambda ()
+                 (load "dired-x")
+                 ;; Set dired-x global variables here.  For example:
+                 ;; (setq dired-guess-shell-gnutar "gtar")
+                 ;; (setq dired-x-hands-off-my-keys nil)
+                 ))
+     (add-hook 'dired-mode-hook
+               (lambda ()
+                 ;; Set dired-x buffer-local variables here.  For example:
+                 ;; (dired-omit-mode 1)
+                 ))
 
 ;; WinnerMode
 
@@ -238,6 +251,90 @@
 ;    map))
 ;
 
+;;    rewrite cperl-write-tags
+
+(setq cperl-tags-file-name "PDE-TAGS")
+
+
+(defun cperl-write-tags (&optional file erase recurse dir inbuffer noxs topdir)
+  ;; If INBUFFER, do not select buffer, and do not save
+  ;; If ERASE is `ignore', do not erase, and do not try to delete old info.
+  (require 'etags)
+  (if file nil
+    (setq file (if dir default-directory (buffer-file-name)))
+    (if (and (not dir) (buffer-modified-p)) (error "Save buffer first!")))
+  (or topdir
+      (setq topdir default-directory))
+  (let ((tags-file-name cperl-tags-file-name)
+	(case-fold-search (eq system-type 'emx))
+	xs rel tm)
+    (save-excursion
+      (cond (inbuffer nil)		; Already there
+	    ((file-exists-p tags-file-name)
+	     (if (featurep 'xemacs)
+		 (visit-tags-table-buffer)
+	       (visit-tags-table-buffer tags-file-name)))
+	    (t (set-buffer (find-file-noselect tags-file-name))))
+      (cond
+       (dir
+	(cond ((eq erase 'ignore))
+	      (erase
+	       (erase-buffer)
+	       (setq erase 'ignore)))
+	(let ((files
+	       (condition-case err
+		   (directory-files file t
+				    (if recurse nil cperl-scan-files-regexp)
+				    t)
+		 (error
+		  (if cperl-unreadable-ok nil
+		    (if (y-or-n-p
+			 (format "Directory %s unreadable.  Continue? " file))
+			(setq cperl-unreadable-ok t
+			      tm nil)	; Return empty list
+		      (error "Aborting: unreadable directory %s" file)))))))
+	  (mapc (function
+		 (lambda (file)
+		   (cond
+		    ((string-match cperl-noscan-files-regexp file)
+		     nil)
+		    ((not (file-directory-p file))
+		     (if (string-match cperl-scan-files-regexp file)
+			 (cperl-write-tags file erase recurse nil t noxs topdir)))
+		    ((not recurse) nil)
+		    (t (cperl-write-tags file erase recurse t t noxs topdir)))))
+		files)))
+       (t
+	(setq xs (string-match "\\.xs$" file))
+	(if (not (and xs noxs))
+	    (progn
+	      (cond ((eq erase 'ignore) (goto-char (point-max)))
+		    (erase (erase-buffer))
+		    (t
+		     (goto-char 1)
+		     (setq rel file)
+		     ;; On case-preserving filesystems (EMX on OS/2) case might be encoded in properties
+		     (set-text-properties 0 (length rel) nil rel)
+		     (and (equal topdir (substring rel 0 (length topdir)))
+			  (setq rel (substring file (length topdir))))
+		     (if (search-forward (concat "\f\n" rel ",") nil t)
+			 (progn
+			   (search-backward "\f\n")
+			   (delete-region (point)
+					  (save-excursion
+					    (forward-char 1)
+					    (if (search-forward "\f\n"
+								nil 'toend)
+						(- (point) 2)
+					      (point-max)))))
+		       (goto-char (point-max)))))
+	      (insert (cperl-find-tags file xs topdir))))))
+      (if inbuffer nil			; Delegate to the caller
+	(save-buffer 0)			; No backup
+	(if (fboundp 'initialize-new-tags-table) ; Do we need something special in XEmacs?
+	    (initialize-new-tags-table))))))
+
+;;-----------------------------------------------------------
 
 ;; This function was copied from internet
 (defun renumber-list (start end &optional num)

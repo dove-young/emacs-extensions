@@ -23,10 +23,13 @@
 (setq
   el-get-sources
   '(el-get
+    auctex
     auto-complete
     browse-kill-ring
     buffer-move
-    basic-mode
+    dired+
+    bookmark+
+;    basic-mode
 ;    crontab-mode
 ;    csv-mode
     tabbar
@@ -34,6 +37,8 @@
     switch-window
     yasnippet
     hide-region
+    (:name session
+           :post-init (lambda () (add-hook 'after-init-hook 'session-initialize)))
     (:name emacs-w3m
            :type emacswiki
            :features w3m-load
@@ -64,12 +69,12 @@
 ;           :features org-install)
     (:name orgmode
            :type http-tar
-           :url "file:///home/dove/.emacs.d/org-7.5.tar.gz"
-;           :url "file://localhost/home/dove/.emacs.d/org-7.5.tar.gz"
+           :url "file:///home/dove/.emacs.d/org-7.6.tar.gz"
+;           :url "file:///home/dove/.emacs.d/org-7.5.tar.gz"
            :options ("xzf")
-           :info "./org-7.5/doc"
-           :build ("cd ./org-7.5; make")
-           :load-path ("./org-7.5/lisp")
+           :info "./org-7.6/doc"
+           :build ("cd ./org-7.6; make")
+           :load-path ("./org-7.6/lisp")
            :features org-install)
 
     (:name haskell-mode
@@ -105,6 +110,15 @@
     (:name hexrgb
            :type emacswiki
            :features hexrgb)
+
+    (:name cedet
+           :type bzr
+           :url "bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk"
+           :build ("make")
+           :features cedet
+           :load-path ("./common" "./semantic")
+           :post-init (lambda () (global-ede-mode 1))
+           )
 ))
 
 ;(el-get 'sync)

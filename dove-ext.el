@@ -200,7 +200,7 @@
 
       (defun rename-buffer-in-ssh-login (cmd)
         "Rename buffer to the destination hostname in ssh login"
-        (if (string-match "ssh .* [-_a-z0-9A-Z]+@[-_a-z0-9A-Z.]+[ ]*[^-_a-z0-9-A-Z]*$" cmd)
+        (if (string-match "ssh .* [-_a-z0-9A-Z]+@[-_a-z0-9A-Z.]+[ ]*[^-_a-z0-9-A-Z.]*$" cmd)
             (let (( host (nth 1 (split-string cmd "[@\n]" t) ))
       	    )
 ;            (message "%s" (split-string cmd "[ @\n]" t) )

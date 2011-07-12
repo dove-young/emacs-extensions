@@ -11,7 +11,7 @@
 (setq system-time-locale "C")
 
 (display-time)
-(bbdb-initialize)
+;(bbdb-initialize)
 (global-visual-line-mode 1)
 ;(tabbar-mode)
 ;(icy-mode 1)
@@ -74,6 +74,21 @@
 
 (setenv "EMACSSHELL" shell-file-name)
 
+(eval-after-load 'speedbar
+  '(progn
+     (speedbar-add-supported-extension ".sh")
+     (speedbar-add-supported-extension ".pl")
+     (speedbar-add-supported-extension ".pm")
+     (speedbar-add-supported-extension ".txt")
+     (setq speedbar-frame-parameters '((minibuffer)
+                                       (width . 30)
+                                       (border-width . 0)
+                                       (menu-bar-lines . 0)
+                                       (tool-bar-lines . 0)
+                                       (unsplittable . t)
+                                       (left-fringe . 0)))
+     ))
+  
 ; http://www.emacswiki.org/emacs-zh/FillParagraph
 
  ;(setq paragraph-start "\\*\\|$" 
