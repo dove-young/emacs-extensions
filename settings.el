@@ -52,6 +52,8 @@
 ;      dired-isearch-filenames                           dwim
 )
 
+(setq dired-auto-revert-buffer t)
+
 ; hippie mode remember an anchor then jump back
 (setq hippie-expand-try-functions-list 
       '(try-expand-dabbrev
@@ -73,6 +75,8 @@
 )
 
 (setenv "EMACSSHELL" shell-file-name)
+
+(setq speedbar-use-images t)
 
 (eval-after-load 'speedbar
   '(progn

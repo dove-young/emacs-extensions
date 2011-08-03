@@ -93,8 +93,8 @@
 
 (add-hook 'emacs-lisp-mode-hook 
           (lambda ()
-  (local-set-key "\C-cn" (lambda () (interactive) (goto-symbol 'outline-regexp)))
-  (local-set-key "\C-cp" (lambda () (interactive) (goto-symbol 'outline-regexp t)))
+;  (local-set-key "\C-cn" (lambda () (interactive) (goto-symbol 'outline-regexp)))
+;  (local-set-key "\C-cp" (lambda () (interactive) (goto-symbol 'outline-regexp t)))
 
  ) t )
 
@@ -121,8 +121,8 @@
   (setq outline-regexp        cperl-outline-regexp)
   (setq outline-level        'cperl-outline-level)
 
-  (local-set-key "\C-cn" (lambda () (interactive) (goto-symbol 'outline-regexp)))
-  (local-set-key "\C-cp" (lambda () (interactive) (goto-symbol 'outline-regexp t)))
+;  (local-set-key "\C-cn" (lambda () (interactive) (goto-symbol 'outline-regexp)))
+;  (local-set-key "\C-cp" (lambda () (interactive) (goto-symbol 'outline-regexp t)))
 
   (local-set-key "\C-m" 'newline-and-indent)
   (local-set-key "\C-j" 'newline)
