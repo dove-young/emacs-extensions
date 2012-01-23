@@ -34,6 +34,7 @@
 ;; 2010-09-27 added roll-v-3
 ;; 2010-10-01 Rewrote some functions in more Lisp like style
 ;; 2010-10-09 Rewrote those functions related to copy without selection
+;; 2012-01-22 Multiple modify and enhancement
 
 (defun get-point (symbol &optional arg)
  "get the point"
@@ -270,7 +271,13 @@
  "Save current line into Kill-Ring without mark the line "
   (interactive "P")
   (copy-thing 'beginning-of-line 'end-of-line arg)
-  (paste-to-mark (lambda () (string= "shell-mode" major-mode)) arg)
+;  (paste-to-mark (lambda () (string= "shell-mode" major-mode)) arg)
+    (paste-to-mark (lambda ()
+                     (or
+                      (string= "shell-mode" major-mode)
+                      (string= "eshell-mode" major-mode)
+                      ))
+                   arg)
 )
 
 (defun duplicate-line(&optional arg)
@@ -288,14 +295,26 @@
  "Copy words at point into kill-ring"
   (interactive "P")
   (copy-thing 'backward-word 'forward-word arg)
-  (paste-to-mark (lambda () (string= "shell-mode" major-mode)) arg)
+;  (paste-to-mark (lambda () (string= "shell-mode" major-mode)) arg)
+    (paste-to-mark (lambda ()
+                     (or
+                      (string= "shell-mode" major-mode)
+                      (string= "eshell-mode" major-mode)
+                      ))
+                   arg)
 )
 
 (defun copy-paragraph (&optional arg)
  "Copy paragraphes at point"
   (interactive "P")
   (copy-thing 'backward-paragraph 'forward-paragraph arg)
-  (paste-to-mark (lambda () (string= "shell-mode" major-mode)) arg)
+;  (paste-to-mark (lambda () (string= "shell-mode" major-mode)) arg)
+  (paste-to-mark (lambda ()
+                   (or
+                    (string= "shell-mode" major-mode)
+                    (string= "eshell-mode" major-mode)
+                    ))
+                   arg)
 )
 
 
@@ -355,13 +374,6 @@
   (re-search-forward "[ \t]" (line-end-position) 3 arg)
 	     (if (looking-back "[\t ]") (goto-char (- (point) 1)) )
 )
-;(defun amark (&optional arg)
-;  ""
-;  (interactive "P")
-;  (pop-mark)
-;  (message "%s  %s" (mark) (point))
-;)
-
 
 (defun go-there(arg) 
   ""
@@ -379,18 +391,48 @@ When used in shell-mode, it will paste string on shell prompt by default "
    (t
 ;      (message "%s" "223 456")
     (copy-thing 'beginning-of-string 'end-of-string arg)))
-    (paste-to-mark (lambda () (string= "shell-mode" major-mode)) arg)
+    (paste-to-mark (lambda ()
+                     (or
+                      (string= "shell-mode" major-mode)
+                      (string= "eshell-mode" major-mode)
+                      ))
+                   arg)
 )
 
+(setq dove-parenthesis-list 
+      '( ("[" "]") 
+         ("(" ")")
+         ("<" ">")
+         ("{" "}")
+         ("\"" "\"")
+         ("'"  "'")
+         ))
+
 (defun beginning-of-parenthesis(&optional arg)
-  "  "
-  (re-search-backward "[[<(?\"]" (line-beginning-position) 3 1)
-	     (if (looking-at "[[<(?\"]")  (goto-char (+ (point) 1)) )
+  "Go to the beginning of parenthesis 
+and set the dove-parenthesis-begin found there"
+
+  (re-search-backward "[[<(?\'\"]" (line-beginning-position) 3 1)
+	     (if (looking-at "[[<(?\'\"]")
+                 (progn
+                   (goto-char (+ (point) 1))
+                   (setq dove-parenthesis-begin (string (char-before (point))))
+                   ))
 )
 (defun end-of-parenthesis(&optional arg)
-  " "
-  (re-search-forward "[]>)?\"]" (line-end-position) 3 arg)
-	     (if (looking-back "[]>)?\"]") (goto-char (- (point) 1)) )
+  "Go to the end of parenthesis.
+Parenthesis character was defined by beginning-of-parenthesis"
+
+  (setq dove-parenthesis-end
+         (mapconcat (lambda (x)
+                      (if (string= dove-parenthesis-begin (nth 0 x))
+                          (nth 1 x)))
+                    dove-parenthesis-list nil))
+  (goto-char (+ (point) 1))
+  (re-search-forward dove-parenthesis-end
+                     (line-end-position) 3 arg)
+	     (if (looking-back dove-parenthesis-end)
+                 (goto-char (- (point) 1)) )
 )
 
 (defun thing-copy-parenthesis-to-mark(&optional arg)
@@ -691,32 +733,29 @@ When used in shell-mode, it will paste parenthesis on shell prompt by default "
 ;  |           |            |                     |           |            | 
 ;  +------------------------+                     +------------------------+ 
 
+(defun roll-v-3 ()
+  "Rolling 3 window buffers clockwise"
+  (interactive)
+  (select-window (get-largest-window))
+  (if (= 3 (length (window-list)))
+      (let ((winList (window-list)))
+	    (let ((1stWin (car winList))
+		  (2ndWin (car (cdr winList)))
+		  (3rdWin (car (cdr (cdr winList)))))
+	      (let ((1stBuf (window-buffer 1stWin))
+		    (2ndBuf (window-buffer 2ndWin))
+		    (3rdBuf (window-buffer 3rdWin))
+		    )
+		    (set-window-buffer 1stWin 3rdBuf)
+		    (set-window-buffer 2ndWin 1stBuf)
+		    (set-window-buffer 3rdWin 2ndBuf)
+		    )
+	      )
+	    )
+    )
+)
 
-  (defun roll-v-3 (&optional arg)
-    "Rolling 3 window buffers clockwise"
-    (interactive "P")
-    (select-window (get-largest-window))
-    
-    (let ((winList (window-list))
-          (set-buf (lambda (lst) (set-window-buffer (car lst) (car (last lst))))))
-      (if (= 3 (length winList))
-          (let ((1stWin (car winList))
-                (2ndWin (car (cdr winList)))
-                (3rdWin (car (last winList))))
 
-;            (let ((1stBuf (window-buffer 1stWin))
-;                  (2ndBuf (window-buffer 2ndWin))
-;                  (3rdBuf (window-buffer 3rdWin)))
-	      (let ((anti-clockwise (list 
-				(list 1stWin (window-buffer 3rdWin)) 
-				(list 2ndWin (window-buffer 1stWin)) 
-				(list 3rdWin (window-buffer 2ndWin))))
-		    (clock-wise (list 
-				      (list 1stWin (window-buffer 2ndWin)) 
-				      (list 2ndWin (window-buffer 3rdWin)) 
-				      (list 3rdWin (window-buffer 1stWin)))))
-	      (if arg (mapc set-buf clockwise)
-		(mapc set-buf anti-clock-wise)))))))
 
 ;              (if arg (mapc set-buf (list (list 1stWin 2ndBuf) (list 2ndWin 3rdBuf) (list 3rdWin 1stBuf)))
 ;                (mapc set-buf (list (list 1stWin 3rdBuf) (list 2ndWin 1stBuf) (list 3rdWin 2ndBuf)) )))))))
@@ -785,6 +824,16 @@ When used in shell-mode, it will paste parenthesis on shell prompt by default "
   (insert str1)
 )
 
+(defun i-babel-quote-str (beg end Str)
+  ""
+;    (let ((beg St) (end Ed))
+    (goto-char end)
+    (insert Str)
+    (goto-char beg)
+    (insert Str)
+    (goto-char (+ end 2))
+)
+
 (defun iexp (St Ed)
   "Enclose example for org-mode"
   (interactive "r")
@@ -815,12 +864,14 @@ When used in shell-mode, it will paste parenthesis on shell prompt by default "
 (defun i= (St Ed)
   ""
   (interactive "r")
-  (let ((beg St) (end Ed))
-    (goto-char end)
-    (insert "=")
-    (goto-char beg)
-    (insert "=")
-    (goto-char (+ end 2)))
+  (i-babel-quote-str St Ed "=")
+
+;  (let ((beg St) (end Ed))
+;    (goto-char end)
+;    (insert "=")
+;    (goto-char beg)
+;    (insert "=")
+;    (goto-char (+ end 2)))
 )
 
 
@@ -883,6 +934,25 @@ When used in shell-mode, it will paste parenthesis on shell prompt by default "
 		     ))
 )
 
+(add-hook 'slime-repl-mode-hook 
+          (lambda ()
+            (set-key-bindings 'local-set-key
+                              (list
+                               (list (kbd "C-c C-q") 'slime-close-all-parens-in-sexp)
+                               )))
+)
+
+
+(add-hook 'slime-mode-hook 
+          (lambda ()
+            (set-key-bindings 'local-set-key
+                              (list
+                               (list (kbd "C-c C-q") 'slime-close-all-parens-in-sexp)
+                               )))
+)
+
+
+
 (defun hs-hide-all-comments ()
   "Find all comments in the file and hide them via hs-hide-comment-region"
   (interactive)
@@ -904,17 +974,15 @@ When used in shell-mode, it will paste parenthesis on shell prompt by default "
 )
 
 (defun goto-symbol (arg &optional flag)
-                           "find the next function definition"
-                           (interactive)
-                           (if (or flag nil)
-                               (re-search-backward (eval arg) )
-                             (re-search-forward (eval arg) ))
-                             )
+  "find the next function definition"
+  (interactive)
+  (if (or flag nil)
+      (re-search-backward (eval arg) )
+    (re-search-forward (eval arg) ))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
 (provide 'dove-ext)
-
-;(char-after)b (char-before)
