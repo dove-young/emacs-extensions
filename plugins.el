@@ -11,9 +11,10 @@
 
 (setq outline-minor-mode-list 
       (list '(emacs-lisp-mode "(defun\\|(defvar\\|(defcustom\\|(defconst")
-	    '(shell-mode ".*[bB]ash.*[#\$] ")
+	    '(shell-mode "^dove@zsh.*[#%\$] ")
 	    '(sh-mode "function .*{")
 	    '(perl-mode "sub ")
+	    '(eshell-mode "^[^#$\n]* [#$] ")
 
  ))
 
@@ -22,8 +23,8 @@
       '(shell-mode-hook
         sh-mode-hook
         emacs-lisp-mode-hook
-        )
-)
+        eshell-mode-hook
+        ))
 
 (add-hook 'minibuffer-hook (setq blink-matching-paren nil))
 
@@ -183,6 +184,27 @@
                     (setq icicle-top-level-key-bindings my-icicle-top-level-key-bindings) )))
 
 (icy-mode)
+
+
+(add-hook 'slime-repl-mode-hook 
+          (lambda ()
+            (set-key-bindings 'local-set-key
+                              (list
+                               (list (kbd "C-c C-q") 'slime-close-all-parens-in-sexp)
+                               )))
+)
+
+
+(add-hook 'slime-mode-hook 
+          (lambda ()
+            (set-key-bindings 'local-set-key
+                              (list
+                               (list (kbd "C-c C-q") 'slime-close-all-parens-in-sexp)
+                               )))
+)
+
+
+
 ;)
 
 ; (setq view-mode-hook nil)
