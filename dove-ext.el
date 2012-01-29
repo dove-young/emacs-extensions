@@ -280,7 +280,7 @@
           (paste-to-mark 'dove-paste-condition ,arg)))
 
 (macroexpand '(copy-something 
-               beginning-of-line end-of-line arg))
+               beginning-of-string end-of-string arg))
 
 (defun copy-line (&optional arg)
  "Copy lines at point and paste them to mark
@@ -316,11 +316,12 @@ With prefix 1, copy but not paste.
 with prefix N, copy N strings from the point."
 
   (interactive "P")
-  (cond 
+  (cond                   ; This cannot be done by copy-something macro
    ((and mark-active transient-mark-mode)
     (pop-mark))
    (t
-    (copy-something 'beginning-of-string 'end-of-string arg))))
+    (copy-thing 'beginning-of-string 'end-of-string arg)))
+  (paste-to-mark 'dove-paste-condition arg))
 
 
 (defun thing-copy-parenthesis-to-mark(&optional arg)
