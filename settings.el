@@ -30,6 +30,9 @@
       ido-toggle-regexp                                  t
       kill-do-not-save-duplicates                        t
       appt-issue-message                                 t
+      dired-auto-revert-buffer                           t
+      speedbar-use-images                                t
+
       show-paren-style                                   'mixed
       default-fill-column                                100
       uniquify-buffer-name-style                         'forward
@@ -44,15 +47,17 @@
       calendar-longitude                                 +116.23
       calendar-location-name                             "Beijing"
       ibuffer-default-sorting-mode                       'major-mode
-      multi-term-program                                 "/bin/bash"
+      multi-term-program                                 "/usr/bin/zsh"
       dim:switch-window-relative                         nil
-      shell-file-name                                    "/bin/bash"
+      shell-file-name                                    "/usr/bin/zsh"
       default-major-mode                                 'text-mode
       cperl-xemacs-p                                     nil
 ;      dired-isearch-filenames                           dwim
+      split-height-threshold                             nil                 ; set split-window horizontally by default
+      split-width-threshold                              80 
 )
 
-(setq dired-auto-revert-buffer t)
+;(setq dired-auto-revert-buffer t)
 
 ; hippie mode remember an anchor then jump back
 (setq hippie-expand-try-functions-list 
@@ -76,7 +81,7 @@
 
 (setenv "EMACSSHELL" shell-file-name)
 
-(setq speedbar-use-images t)
+;(setq speedbar-use-images t)
 
 (eval-after-load 'speedbar
   '(progn
@@ -103,4 +108,44 @@
 ;;                (when (y-or-n-p "Auto Fill mode? ")
 ;;                  (turn-on-auto-fill))))
 
+
+(setq eshell-prompt-function (lambda nil
+  (concat
+;   (number-to-string 
+;    (+ 1 
+;       (ring-length eshell-history-ring))) " + "
+   (format-time-string "%H:%M:%S")         " + "
+
+   (let ((dir-list
+          (split-string ;"~/Shell/branch_dev/agent_team/common" "/")))
+           (abbreviate-file-name
+            (eshell/pwd)) "/")))
+     (if
+         (> (length dir-list) 1)
+         (concat (car (last (butlast dir-list))) "/" (car (last dir-list)))
+       (car dir-list))
+     )
+   (if
+       (=
+        (user-uid)
+        0)
+       " # " " $ "))))
+
+
+
+
+
+
+;13:49:52 + ~ $ cd Shell/
+;13:49:58 + ~/Shell $ cd branch_dev/
+;13:50:01 + Shell/branch_dev $ cd agent_team/
+;13:50:03 + branch_dev/agent_team $ cd common/
+;13:50:06 + agent_team/common $ 
+
+
+;(setq eshell-prompt-regexp "
+;[0-9]+ \+ [0-9:]+ \+ .*
+;dove@eshell [$#]")
+
+;(setq eshell-prompt-regexp "^[0-9]+ \+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9] \+ .*\n[^#$\n]* [#$] ")                                             
 
