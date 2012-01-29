@@ -108,8 +108,8 @@
      (custom-variable-tag ((t (:bold t :foreground "Aquamarine" :weight bold))))
      (custom-visibility ((t (:underline t :foreground "cyan1" :height 0.8))))
      (diary-face ((t (:foreground "IndianRed"))))
-     (diff-added-face ((t (nil))))
-     (diff-changed-face ((t (nil))))
+     (diff-added-face ((t ((:background "gold" :foreground "blue")))))
+     (diff-changed-face ((t ((:background "gold" :foreground "black")))))
      (diff-context-face ((t (:foreground "grey70"))))
      (diff-file-header-face ((t (:bold t :weight bold))))
      (diff-function-face ((t (:foreground "grey70"))))
@@ -140,7 +140,7 @@
      (eshell-ls-archive-face ((t (:bold t :foreground "IndianRed" :weight bold))))
      (eshell-ls-backup-face ((t (:foreground "Grey"))))
      (eshell-ls-clutter-face ((t (:foreground "DimGray"))))
-     (eshell-ls-directory-face ((t (:bold t :foreground "MediumSlateBlue" :weight bold))))
+     (eshell-ls-directory-face ((t (:bold t :foreground "LightSkyBlue" :weight bold))))
      (eshell-ls-executable-face ((t (:foreground "Coral"))))
      (eshell-ls-missing-face ((t (:foreground "black"))))
      (eshell-ls-picture-face ((t (:foreground "Violet"))))
@@ -151,7 +151,8 @@
      (eshell-ls-text-face ((t (:foreground "medium aquamarine"))))
      (eshell-ls-todo-face ((t (:bold t :foreground "aquamarine" :weight bold))))
      (eshell-ls-unreadable-face ((t (:foreground "DimGray"))))
-     (eshell-prompt-face ((t (:foreground "powder blue"))))
+     (eshell-prompt-face ((t (:bold t :foreground "DodgerBlue" :weight bold))))
+;     (eshell-prompt-face ((t (:foreground "powder blue"))))
      (fg:erc-color-face0 ((t (:foreground "white"))))
      (fg:erc-color-face1 ((t (:foreground "beige"))))
      (fg:erc-color-face10 ((t (:foreground "pale goldenrod"))))
@@ -407,15 +408,13 @@
 ; (my-color-theme)
 
 
-
- 
-(message "%s" 123)
 ;(eval-when-compile (require 'color-theme))
 (color-theme-initialize)
 
 (add-hook 'after-make-frame-functions 
 	  (lambda (arg)
 	    ""
+;	    (color-theme-sitaramv-solaris)) t)
 	    (my-color-theme)) t)
 
 
