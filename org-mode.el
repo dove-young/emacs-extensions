@@ -1,20 +1,24 @@
-
+(add-to-list 'load-path "/home/dove/org/org-7.7/lisp")
 (require 'org-install)
+(require 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(setq org-agenda-files (list "~/org/work.org" "~/org/home.org"))
+(setq org-agenda-files (list "~/org/gtd.org" ))
+;(setq org-agenda-files (list "~/org/work.org" "~/org/home.org"))
 ;(add-hook 'org-mode-hook 'turn-on-font-lock) 
 (org-remember-insinuate)
 (setq org-directory "~/org")
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 (define-key global-map "\C-cr" 'org-remember)
 (setq org-use-fast-todo-selection t)
-
+(setq org-agenda-tags-column -100)
+(setq org-tags-column -100)
 ;(setq org-indent-mode nil)
 ;(setq system-time-locale "C")
 ;(setq org-return-follows-link t)
 ;(require 'org-babel-init)
 
 ;(add-hook 'org-mode-hook
+;           (setq system-time-locale "C"))
 ;	  (setq org-indent-mode nil))
 
 ;(define-key org-mode-map (kbd "C-c a") (quote org-agenda))
@@ -68,8 +72,8 @@ _"\n"
 (define-skeleton 1src 
   "Input #+begin_src #+end_src in org-mode"
 ""
-"#+begin_src lisp \n"
- _ "\n" 
+"#+begin_src "_ "\n"
+"\n" 
 "#+end_src"
 )
 
