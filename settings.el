@@ -55,6 +55,8 @@
 ;      dired-isearch-filenames                           dwim
       split-height-threshold                             nil                 ; set split-window horizontally by default
       split-width-threshold                              80 
+      scroll-conservatively                               10
+      scroll-margin                                              2
 )
 
 ;(setq dired-auto-revert-buffer t)

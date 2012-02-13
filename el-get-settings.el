@@ -25,6 +25,7 @@
   '(el-get
     auctex
     auto-complete
+    anything
     browse-kill-ring
     buffer-move
     dired+
@@ -37,6 +38,16 @@
     switch-window
     yasnippet
     hide-region
+    (:name menu-bar+
+           :type emacswiki
+           :features menu-bar+)
+    (:name dired-sort-menu
+           :type emacswiki
+           :features dired-sort-menu)
+;    dired-sort-menu+
+    (:name dired-sort
+           :type emacswiki
+           :features dired-sort)
     (:name session
            :post-init (lambda () (add-hook 'after-init-hook 'session-initialize)))
     (:name emacs-w3m
@@ -61,20 +72,13 @@
            :type emacswiki
            :features move-text)
 
-;    (:name orgmode
-;           :type git
-;           :url  "git://orgmode.org/org-mode.git"
-;           :build ("make")
-;           :load-path ("./lisp")
-;           :features org-install)
     (:name orgmode
            :type http-tar
            :url "file:///home/dove/.emacs.d/org-7.6.tar.gz"
-;           :url "file:///home/dove/.emacs.d/org-7.5.tar.gz"
            :options ("xzf")
            :info "./org-7.6/doc"
            :build ("cd ./org-7.6; make")
-           :load-path ("./org-7.6/lisp")
+           :load-path ("./lisp")
            :features org-install)
 
     (:name haskell-mode

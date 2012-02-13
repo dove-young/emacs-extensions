@@ -15,8 +15,8 @@
          '([f6] back-to-the-word)
          '([f7] move-to-the-word)
 ;	 '([f9] transient-mark-mode)
-	 '([(shift f9)] hide-region-unhide)
 	 '([f9] hide-region-hide) 
+	 '([(shift f9)] hide-region-unhide)
 	 '([f11] query-replace)
 	 '([(shift f11)] query-replace-regexp)
 	 '([f12] speedbar-get-focus)
@@ -53,13 +53,12 @@
 	 ;; Finding and locating
 	 `( ,(kbd "C-x a g") goto-line)
 	 `( ,(kbd "C-x a b") back-to-the-word)
-	 ;; `( ,(kbd "C-x a s") move-to-the-word)
 	 `( ,(kbd "C-x a k") to-the-line-end)
 	 `( ,(kbd "C-x a K") erease-to-line-end)
-	 `( ,(kbd "C-x a [") backward-paragraph)
-	 `( ,(kbd "C-x a ]") forward-paragraph)
-	 `( ,(kbd "M-]") move-forward-paren)
-	 `( ,(kbd "M-[") move-backward-paren)
+	 `( ,(kbd "M-[") backward-paragraph)
+	 `( ,(kbd "M-]") forward-paragraph)
+	 `( ,(kbd "M-}") move-forward-paren)
+	 `( ,(kbd "M-{") move-backward-paren)
 	 ;; commands
 	 `( ,(kbd "C-c z") eshell)
 ;	 `( ,(kbd "C-c z") shell)
@@ -70,7 +69,9 @@
 	;`( ,(kbd "C-x 4 v") split-v)
 	 `( ,(kbd "C-x 4 C") change-split-type-3)
 	;`( ,(kbd "C-x 4 V") split-v-3)
-	 `( ,(kbd "C-x 4 r") roll-v-3)
+;	 `( ,(kbd "C-x 4 r") roll-v-3)
+	 `( ,(kbd "C-x 4 r") roll-3-buffers-clockwise)
+	 `( ,(kbd "C-x 4 R") roll-3-buffers-anti-clockwise)
 
 	 `( ,(kbd "C-x r p") string-insert-rectangle)
 
@@ -87,7 +88,8 @@
 	 `( ,(kbd "M-d") dove-forward-kill-word)
 	 `( ,(kbd "C-c e") exitshell)
 	 `( ,(kbd "<insert>") my-overwrite)
-	 `( ,(kbd "C-c v") viper-mode)
+	 `( ,(kbd "C-c v") view-mode)
+;	 `( ,(kbd "C-c v") viper-mode)
 	 `( ,(kbd "C-M-s") isearch-forward)
 	 `( ,(kbd "C-s") isearch-forward-regexp)
 	 `( ,(kbd "C-M-r") isearch-backward)
@@ -97,7 +99,14 @@
 	 `( ,(kbd "C-c o") move-to-the-word)
 	 `( ,(kbd "C-c O") back-to-the-word)
 	 `( ,(kbd "C-c d") duplicate-line)
-	 `( ,(kbd "C-c c") ,(lambda() " " (interactive) (if view-mode (View-exit-and-edit) (view-mode))))
+	 `( ,(kbd "C-c v") ,(lambda () 
+                              (interactive) 
+                              (if view-mode 
+                                  (progn (View-exit-and-edit) 
+                                           (if (memq dove-view-mode-line mode-line-format) 
+                                               (setq mode-line-format 
+                                                     (delq dove-view-mode-line mode-line-format))))
+                                         (view-mode))))
 
 	 `( ,(kbd "M-DEL")
 	   ,(lambda(&optional arg) 
@@ -112,3 +121,73 @@
          `( ,(kbd "<f6>") back-to-the-word)
          `( ,(kbd "<f7>") move-to-the-word)
 ))
+
+
+
+
+; (add-hook 'view-mode-hook
+;           (lambda ()
+;             (define-key view-mode-map "o" (lambda nil (interactive) (View-scroll-line-backward (/ (window-height) 2))) )
+;             (define-key view-mode-map "e" (lambda nil (interactive) (View-scroll-line-forward  (/ (window-height) 2))) )
+;             (define-key view-mode-map "j" 'View-scroll-page-forward)
+;             (define-key view-mode-map "k" 'View-scroll-page-backward)))
+
+(defmacro dove-easy-scroll (mode-map)
+  `(lambda ()
+     (define-key ,mode-map "o" (lambda nil (interactive) (scroll-down (/ (window-height) 2))))
+     (define-key ,mode-map "e" (lambda nil (interactive) (scroll-up (/ (window-height) 2))))
+     (define-key ,mode-map "k" (lambda nil (interactive) (previous-line)))
+     (define-key ,mode-map "j" (lambda nil (interactive) (next-line )))))
+
+; (macroexpand '(dove-easy-scroll Info-mode-map))
+
+(add-hook 'view-mode-hook
+          (dove-easy-scroll view-mode-map))
+
+(add-hook 'view-mode-hook
+          (lambda ()
+            (defvar view-mode-textual (purecopy " View")
+              "The string displayed in the mode line when in overwrite mode.")
+            (add-to-list 'mode-line-format 
+                         (propertize view-mode-textual 'face '(:foreground "white" :background "red")))
+            (setq dove-view-mode-line (car mode-line-format)))
+
+)
+
+(add-hook 'Info-mode-hook
+          (dove-easy-scroll Info-mode-map))
+
+; (setq Info-mode-hook nil)
+; (setq view-mode-hook nil)
+
+(eval-after-load 'w3m
+  '(progn
+     (add-hook 'w3m-mode-hook (lambda ()
+               (define-key w3m-mode-map "e" (lambda nil (interactive) (w3m-scroll-up-1 (/ (window-height) 2))))  
+               (define-key w3m-mode-map "o" (lambda nil (interactive) (w3m-scroll-up-1 (- 0 (/ (window-height) 2)))))
+               (define-key w3m-mode-map "h" 'w3m-view-previous-page)
+               (define-key w3m-mode-map "l" 'w3m-view-next-page)
+               (define-key w3m-mode-map (kbd "C-w") 'w3m-close-window)))))
+
+(add-hook 'latex-mode-hook
+	  (lambda()
+            (local-set-key "{" 'skeleton-pair-insert-maybe)))
+
+(add-hook 'hs-minor-mode-hook
+  '(lambda ()
+     (setq hs-minor-mode t)
+     (define-key hs-minor-mode-map '([f8] hs-hide-block))
+     (define-key hs-minor-mode-map '([shift f8] hs-show-block))))
+
+(add-hook 'slime-repl-mode-hook 
+          (lambda ()
+            (set-key-bindings 'local-set-key
+                              `( ,(kbd "C-c C-q") 'slime-close-all-parens-in-sexp))))
+
+(add-hook 'slime-mode-hook 
+          (lambda ()
+            (set-key-bindings 'local-set-key 
+                              `( ,(kbd "C-c C-q") slime-close-all-parens-in-sexp))))
+(add-hook 'Man-mode-hook
+          (lambda ()
+            (view-mode)))

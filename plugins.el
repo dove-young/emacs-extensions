@@ -1,6 +1,4 @@
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;; plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq dove-init-path "~/.emacs.d/")
@@ -36,30 +34,14 @@
 ))
 
 
-
-(add-hook 'latex-mode-hook
-	  (lambda()
-            (local-set-key "{" 'skeleton-pair-insert-maybe)))
-
-(add-hook 'hs-minor-mode-hook
-  '(lambda ()
-     (setq hs-minor-mode t)
-     (define-key hs-minor-mode-map (quote[f8]) (quote hs-hide-block))
-     (define-key hs-minor-mode-map (quote[(shift f8)]) (quote hs-show-block))
-))
-
-
      (add-hook 'dired-load-hook
                (lambda ()
                  (load "dired-x")
+                  ;; Set dired-x buffer-local variables here.  For example:
+                 (dired-omit-mode 1)
                  ;; Set dired-x global variables here.  For example:
                  ;; (setq dired-guess-shell-gnutar "gtar")
                  ;; (setq dired-x-hands-off-my-keys nil)
-                 ))
-     (add-hook 'dired-mode-hook
-               (lambda ()
-                 ;; Set dired-x buffer-local variables here.  For example:
-                 ;; (dired-omit-mode 1)
                  ))
 
 ;; WinnerMode
@@ -81,23 +63,13 @@
     (when (fboundp 'windmove-default-keybindings)
       (windmove-default-keybindings))
 
-(eval-after-load 'w3m
-  '(progn
-     (add-hook 'w3m-mode-hook (lambda ()
-               (define-key w3m-mode-map "e" (lambda nil (interactive) (w3m-scroll-up-1 (/ (window-height) 2))))  
-                                        ; (w3m-linknum-edit-this-url)
-               (define-key w3m-mode-map "o" (lambda nil (interactive) (w3m-scroll-up-1 (- 0 (/ (window-height) 2)))))
-               (define-key w3m-mode-map "h" 'w3m-previous-buffer)
-               (define-key w3m-mode-map "l" 'w3m-next-buffer)
-               (define-key w3m-mode-map "l" 'w3m-next-buffer)
-               (define-key w3m-mode-map (kbd "C-w") 'w3m-close-window)))))
 
-(add-hook 'emacs-lisp-mode-hook 
-          (lambda ()
-;  (local-set-key "\C-cn" (lambda () (interactive) (goto-symbol 'outline-regexp)))
-;  (local-set-key "\C-cp" (lambda () (interactive) (goto-symbol 'outline-regexp t)))
-
- ) t )
+; (add-hook 'emacs-lisp-mode-hook 
+;           (lambda ()
+; ;  (local-set-key "\C-cn" (lambda () (interactive) (goto-symbol 'outline-regexp)))
+; ;  (local-set-key "\C-cp" (lambda () (interactive) (goto-symbol 'outline-regexp t)))
+; 
+;  ) t )
 
 ;(setq emacs-lisp-mode-hook nil)
 
@@ -166,14 +138,6 @@
               (when (string-match "OddmuseWiki" oddmuse-wiki)
                 (setq oddmuse-post (concat "ham=1;" oddmuse-post))))))
 
-(add-hook 'view-mode-hook
-          (lambda ()
-            (define-key view-mode-map "o" (lambda nil (interactive) (View-scroll-line-backward (/ (window-height) 2))) )
-            (define-key view-mode-map "e" (lambda nil (interactive) (View-scroll-line-forward  (/ (window-height) 2))) )
-            (define-key view-mode-map "j" 'View-scroll-page-forward)
-            (define-key view-mode-map "k" 'View-scroll-page-backward)
-))
-
 (eval-after-load "icicles-opt.el"
  (add-hook 'icicle-mode-hook
           (lambda ()
@@ -184,25 +148,6 @@
                     (setq icicle-top-level-key-bindings my-icicle-top-level-key-bindings) )))
 
 (icy-mode)
-
-
-(add-hook 'slime-repl-mode-hook 
-          (lambda ()
-            (set-key-bindings 'local-set-key
-                              (list
-                               (list (kbd "C-c C-q") 'slime-close-all-parens-in-sexp)
-                               )))
-)
-
-
-(add-hook 'slime-mode-hook 
-          (lambda ()
-            (set-key-bindings 'local-set-key
-                              (list
-                               (list (kbd "C-c C-q") 'slime-close-all-parens-in-sexp)
-                               )))
-)
-
 
 
 ;)

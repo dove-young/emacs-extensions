@@ -348,7 +348,7 @@
      (org-scheduled-today ((t (:foreground "PaleGreen"))))
      (org-sexp-date ((t (:foreground "Cyan"))))
      (org-special-keyword ((t (:foreground "LightSalmon"))))
-     (org-table ((t (:foreground "LightSkyBlue"))))
+     (org-table ((t (:foreground "Bisque"))))
      (org-tag ((t (:bold t :weight bold))))
      (org-target ((t (:underline t))))
      (org-time-grid ((t (:foreground "LightGoldenrod"))))

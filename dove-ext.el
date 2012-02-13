@@ -279,8 +279,8 @@
   `(progn (copy-thing  ,begin-fn ,end-fn ,arg)
           (paste-to-mark 'dove-paste-condition ,arg)))
 
-(macroexpand '(copy-something 
-               beginning-of-string end-of-string arg))
+; (macroexpand '(copy-something 
+;                beginning-of-string end-of-string arg))
 
 (defun copy-line (&optional arg)
  "Copy lines at point and paste them to mark
@@ -389,8 +389,8 @@ Automatic due with nesting {[(<\"''\">)]} characters"
 )
 (defun end-of-string(&optional arg)
   " "
-  (re-search-forward "[ \t,\.]" (line-end-position) 3 arg)
-	     (if (looking-back "[,\.\t ]") 
+  (re-search-forward "[ \t,]" (line-end-position) 3 arg)
+	     (if (looking-back "[,\t ]") 
                  (goto-char (- (point) 1)) 
                (point))
 )
@@ -545,49 +545,6 @@ Parenthesis character was defined by beginning-of-parenthesis"
    )
 )
 
-;;  +----------------------+                 +----------- +-----------+ 
-;;  |                      |           \     |            |           | 
-;;  |                      |   +-------+\    |            |           | 
-;;  +----------------------+   +-------+/    |            |           |
-;;  |                      |           /     |            |           | 
-;;  |                      |                 |            |           | 
-;;  +----------------------+                 +----------- +-----------+ 
-;
-;(defun split-v ()
-;  (interactive)
-;  (if (= 2 (length (window-list)))
-;    (let (( thisBuf (window-buffer))
-;	  ( nextBuf (progn (other-window 1) (buffer-name))))
-;	  (progn   (delete-other-windows)
-;		   (split-window-horizontally)
-;		   (set-window-buffer nil thisBuf)
-;		   (set-window-buffer (next-window) nextBuf)
-;		   ))
-;    )
-;)
-
-
-;;  +----------- +-----------+                  +----------------------+ 
-;;  |            |           |            \     |                      | 
-;;  |            |           |    +-------+\    |                      | 
-;;  |            |           |    +-------+/    +----------------------+ 
-;;  |            |           |            /     |                      | 
-;;  |            |           |                  |                      | 
-;;  +----------- +-----------+                  +----------------------+ 
-;
-;(defun split-h ()
-;  (interactive)
-;  (if (= 2 (length (window-list)))
-;    (let (( thisBuf (window-buffer))
-;	  ( nextBuf (progn (other-window 1) (buffer-name))))
-;	  (progn   (delete-other-windows)
-;		   (split-window-vertically)
-;		   (set-window-buffer nil thisBuf)
-;		   (set-window-buffer (next-window) nextBuf)
-;		   ))
-;    )
-;)
-
 
 ;  +----------------------+                +---------- +----------+
 ;  |                      |          \     |           |          |
@@ -647,15 +604,75 @@ Parenthesis character was defined by beginning-of-parenthesis"
   (select-window (get-largest-window))
   (if (= 3 (length (window-list)))
       (let ((winList (window-list)))
-            (let ((1stBuf (window-buffer (car winList)))
-                  (2ndBuf (window-buffer (car (cdr winList))))
-                  (3rdBuf (window-buffer (car (cdr (cdr winList)))))
+        (let ((1stBuf (window-buffer (car winList)))
+              (2ndBuf (window-buffer (car (cdr winList))))
+              (3rdBuf (window-buffer (car (cdr (cdr winList)))))
 
-                  (split-3 
-                   (lambda(1stBuf 2ndBuf 3rdBuf split-1 split-2)
-                     "change 3 window from horizontal to vertical and vice-versa"
-                     (message "%s %s %s" 1stBuf 2ndBuf 3rdBuf)
+              (split-3 
+               (lambda(1stBuf 2ndBuf 3rdBuf split-1 split-2)
+                 "change 3 window from horizontal to vertical and vice-versa"
+                 (message "%s %s %s" 1stBuf 2ndBuf 3rdBuf)
+                 
+                     (delete-other-windows)
+                     (funcall split-1)
+                     (set-window-buffer nil 2ndBuf)
+                     (funcall split-2)
+                     (set-window-buffer (next-window) 3rdBuf)
+                     (other-window 2)
+                     (set-window-buffer nil 1stBuf)))         
 
+                  (split-type-1 nil)
+                  (split-type-2 nil)
+                  )
+              (if (= (window-width) (frame-width))
+                  (setq split-type-1 'split-window-horizontally 
+                        split-type-2 'split-window-vertically)
+                (setq split-type-1 'split-window-vertically  
+                      split-type-2 'split-window-horizontally))
+              (funcall split-3 1stBuf 2ndBuf 3rdBuf split-type-1 split-type-2)
+
+))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;(defmacro dove-change-3-buffers ((buf_1 buf_2 buf_3) &body body)
+;  `(progn (select-window (get-largest-window))
+;    (if (= 3 (length (window-list)))
+;        (let ((winList (window-list)))
+;          (let ((1stWin (car winList))
+;                (2ndWin (car (cdr winList)))
+;                (3rdWin (car (cdr (cdr winList)))))
+;            (let ((1stBuf (window-buffer 1stWin))
+;                  (2ndBuf (window-buffer 2ndWin))
+;                  (3rdBuf (window-buffer 3rdWin)))
+;              (progn ,@body)))))))
+;
+;(macroexpand '(dove-change-3-buffers 
+;               (3rdBuf 1stBuf 2ndBuf))
+;             (progn
+;               (set-window-buffer 1stWin ,buf_1)
+;               (set-window-buffer 2ndWin ,buf_2)
+;               (set-window-buffer 3rdWin ,buf_3)))
+;
+;;               (lambda () (message "%s" '123))))
+
+
+
+(defun change-split-type-3 ()
+  "Change 3 window style from horizontal to vertical and vice-versa"
+  (interactive)
+  (select-window (get-largest-window))
+  (if (= 3 (length (window-list)))
+      (let ((winList (window-list)))
+        (let ((1stBuf (window-buffer (car winList)))
+              (2ndBuf (window-buffer (car (cdr winList))))
+              (3rdBuf (window-buffer (car (cdr (cdr winList)))))
+
+              (split-3 
+               (lambda(1stBuf 2ndBuf 3rdBuf split-1 split-2)
+                 "change 3 window from horizontal to vertical and vice-versa"
+                 (message "%s %s %s" 1stBuf 2ndBuf 3rdBuf)
+                 
                      (delete-other-windows)
                      (funcall split-1)
                      (set-window-buffer nil 2ndBuf)
@@ -677,38 +694,10 @@ Parenthesis character was defined by beginning-of-parenthesis"
 ))))
 
 
-;;  +----------- +-----------+                  +----------------------+ 
-;;  |            |           |            \     |                      | 
-;;  |            |           |    +-------+\    |                      | 
-;;  |            |-----------|    +-------+/    +----------------------+ 
-;;  |            |           |            /     |          |           | 
-;;  |            |           |                  |          |           | 
-;;  +----------- +-----------+                  +----------------------+ 
-;
-;
-;(defun split-h-3 ()
-;  "Change 3 window style from vertical to horizontal"
-;  (interactive)
-;  (select-window (get-largest-window))
-;  (if (= 3 (length (window-list)))
-;      (let ((winList (window-list)))
-;	    (let ((1stBuf (window-buffer (car winList)))
-;		  (2ndBuf (window-buffer (car (cdr winList))))
-;		  (3rdBuf (window-buffer (car (cdr (cdr winList))))))
-;
-;		(message "%s %s %s" 1stBuf 2ndBuf 3rdBuf)
-;		(delete-other-windows)
-;		(split-window-vertically)
-;		(set-window-buffer nil 1stBuf)
-;		(other-window 1)
-;		(set-window-buffer nil 2ndBuf)
-;		(split-window-horizontally)
-;		(set-window-buffer (next-window) 3rdBuf)
-;		(select-window (get-largest-window))
-;	      )
-;	    )
-;    )
-;)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;  +----------- +-----------+                    +----------- +-----------+ 
 ;  |            |     C     |            \       |            |     A     | 
@@ -726,28 +715,32 @@ Parenthesis character was defined by beginning-of-parenthesis"
 ;  |           |            |                     |           |            | 
 ;  +------------------------+                     +------------------------+ 
 
-(defun roll-v-3 ()
-  "Rolling 3 window buffers clockwise"
-  (interactive)
-  (select-window (get-largest-window))
-  (if (= 3 (length (window-list)))
-      (let ((winList (window-list)))
-	    (let ((1stWin (car winList))
-		  (2ndWin (car (cdr winList)))
-		  (3rdWin (car (cdr (cdr winList)))))
-	      (let ((1stBuf (window-buffer 1stWin))
-		    (2ndBuf (window-buffer 2ndWin))
-		    (3rdBuf (window-buffer 3rdWin))
-		    )
-		    (set-window-buffer 1stWin 3rdBuf)
-		    (set-window-buffer 2ndWin 1stBuf)
-		    (set-window-buffer 3rdWin 2ndBuf)
-		    )
-	      )
-	    )
-    )
-)
 
+(defmacro dove-roll-3-buffers (buf_1 buf_2 buf_3)
+  `(progn (select-window (get-largest-window))
+    (if (= 3 (length (window-list)))
+        (let ((winList (window-list)))
+          (let ((1stWin (car winList))
+                (2ndWin (car (cdr winList)))
+                (3rdWin (car (cdr (cdr winList)))))
+            (let ((1stBuf (window-buffer 1stWin))
+                  (2ndBuf (window-buffer 2ndWin))
+                  (3rdBuf (window-buffer 3rdWin)))
+              (set-window-buffer 1stWin ,buf_1)
+              (set-window-buffer 2ndWin ,buf_2)
+              (set-window-buffer 3rdWin ,buf_3)))))))
+
+; (macroexpand-all '(dove-roll-3-buffers '3rdBuf '1stBuf '2ndBuf))
+
+(defun roll-3-buffers-anti-clockwise ()
+  "Roll 3 window buffers anti-clockwise"
+  (interactive)
+  (dove-roll-3-buffers 3rdBuf 1stBuf 2ndBuf))
+
+(defun roll-3-buffers-clockwise ()
+  "Roll 3 window buffers clockwise"
+  (interactive)
+  (dove-roll-3-buffers 2ndBuf 3rdBuf 1stBuf))
 
 ;(defun dove-hide-shell-output()
 ;  "Hide Shell Output"
@@ -867,6 +860,19 @@ Used in org-mode. For arbitrary content, select them first"
 Used in org-mode. For arbitrary content, select them first"
   (interactive "r")
   (dove-org-babel-shortcut St Ed "*"))
+
+(defun i: (&optional arg)
+  "Insert ': ' at each line of code
+
+Used in org-mode. For operating on multiple lines, use prefix argument"
+  (interactive "P")
+  (beginning-of-line )
+  (insert ": ")
+  (if arg
+      (dotimes (i (- arg 1))
+        (progn 
+          (beginning-of-line 2)
+          (insert ": ")))))
 
 
 ;  (cond
