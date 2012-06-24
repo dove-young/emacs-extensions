@@ -5,7 +5,7 @@
 ;; emacs layout
 (menu-bar-mode 1)
 (tool-bar-mode -1)
-(icomplete-mode 1)
+;(icomplete-mode 1)
 (scroll-bar-mode -1)
 ;(ruler-mode -1)
 (setq system-time-locale "C")
@@ -55,12 +55,18 @@
 ;      dired-isearch-filenames                           dwim
       split-height-threshold                             nil                 ; set split-window horizontally by default
       split-width-threshold                              80 
-      scroll-conservatively                               10
-      scroll-margin                                              2
+      scroll-conservatively                              10
+      scroll-margin                                      2
+      sr-speedbar-width-x                                40
+      scroll-margin                                      1
+      scroll-conservatively                              10000
+      sr-speedbar-width-x                                40
+      dired-omit-mode                                    1
+      linum-mode                                         1
 )
 
 ;(setq dired-auto-revert-buffer t)
-
+(setq ispell-program-name "aspell")
 ; hippie mode remember an anchor then jump back
 (setq hippie-expand-try-functions-list 
       '(try-expand-dabbrev
@@ -91,6 +97,8 @@
      (speedbar-add-supported-extension ".pl")
      (speedbar-add-supported-extension ".pm")
      (speedbar-add-supported-extension ".txt")
+     (speedbar-add-supported-extension ".rb")
+     (speedbar-add-supported-extension ".ru")
      (setq speedbar-frame-parameters '((minibuffer)
                                        (width . 30)
                                        (border-width . 0)
@@ -133,9 +141,24 @@
         0)
        " # " " $ "))))
 
+  (require 'em-smart)
+  (setq eshell-where-to-jump 'begin)
+  (setq eshell-review-quick-commands nil)
+  (setq eshell-smart-space-goes-to-end t)
 
-
-
+;(mapcar
+; (function (lambda (setting)
+;             (setq auto-mode-alist
+;                   (cons setting auto-mode-alist))))
+; '(("\\.xml$".  sgml-mode)
+;   ("\\\.bash" . sh-mode)
+;   ("\\.rdf$".  sgml-mode)
+;   ("\\.session" . emacs-lisp-mode)
+;   ("\\.l$" . c-mode)
+;   ("\\.css$" . css-mode)
+;   ("\\.cfm$" . html-mode)
+;   ("gnus" . emacs-lisp-mode)
+;   ("\\.idl$" . idl-mode)))
 
 
 ;13:49:52 + ~ $ cd Shell/
@@ -151,3 +174,5 @@
 
 ;(setq eshell-prompt-regexp "^[0-9]+ \+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9] \+ .*\n[^#$\n]* [#$] ")                                             
 
+(setq auto-mode-alist (cons '("[^/]\\.dired$" . dired-virtual-mode)
+                                   auto-mode-alist))

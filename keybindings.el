@@ -6,6 +6,8 @@
 ;                   (list (kbd "<f7>") 'move-to-the-word)
 ;))
 
+(global-set-key (kbd "C-z") nil)
+
 (set-key-bindings 'global-set-key	
  (list 
 	 '([f2] calendar)
@@ -20,6 +22,7 @@
 	 '([f11] query-replace)
 	 '([(shift f11)] query-replace-regexp)
 	 '([f12] speedbar-get-focus)
+;         '([f12] sr-speedbar-toggle)
 ;	 '([f12] replace-string)
 	 '([(shift f12)] replace-regexp)
 ;	 '([M-up] 'move-text-up)
@@ -31,7 +34,7 @@
          `( ,(kbd "<M-down>") move-text-down)
 
 	 `( ,(kbd "<C-f10>") rename-buffer)
-	 `( ,(kbd "C-=")   set-mark-command)
+;	 `( ,(kbd "C-=")   set-mark-command)
 	 `( ,(kbd "C-l")   previous-line)
 	 `( ,(kbd "C-p")   recenter-top-bottom)
 	 `( ,(kbd "C-a")   beginning-of-line)
@@ -123,6 +126,7 @@
 ))
 
 
+;(global-set-key [down-mouse-1] 'mouse-set-point)
 
 
 ; (add-hook 'view-mode-hook

@@ -10,9 +10,10 @@
 (setq outline-minor-mode-list 
       (list '(emacs-lisp-mode "(defun\\|(defvar\\|(defcustom\\|(defconst")
 	    '(shell-mode "^dove@zsh.*[#%\$] ")
-	    '(sh-mode "function .*{")
+	    '(sh-mode "function .*[{(]")
 	    '(perl-mode "sub ")
 	    '(eshell-mode "^[^#$\n]* [#$] ")
+            '(ruby-mode "[ ]+def ")
 
  ))
 
@@ -22,7 +23,9 @@
         sh-mode-hook
         emacs-lisp-mode-hook
         eshell-mode-hook
+        ruby-mode-hook
         ))
+
 
 (add-hook 'minibuffer-hook (setq blink-matching-paren nil))
 
@@ -50,6 +53,8 @@
   (winner-mode)
   (windmove-default-keybindings))
 
+(add-hook 'find-file-hook (lambda () (linum-mode 1)))
+
 ;; Dictionary
 ;(load "dictionary-init")
 ;(setq dictionary-use-single-buffer t)
@@ -72,6 +77,30 @@
 ;  ) t )
 
 ;(setq emacs-lisp-mode-hook nil)
+
+; (require 'semantic-ia)
+; 
+; (defun my-semantic-hook ()
+;   (imenu-add-to-menubar "TAGS"))
+; (add-hook 'semantic-init-hooks 'my-semantic-hook)
+; 
+; (require 'semanticdb)
+; (global-semanticdb-minor-mode 1)
+; 
+; ;; if you want to enable support for gnu global
+; (require 'semanticdb-global)
+; ;; enable ctags for some languages:
+; ;;  Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
+; ; (semantic-load-enable-primary-exuberent-ectags-support)
+; (semantic-load-enable-excessive-code-helpers)
+
+; (defun my-cedet-hook ()
+;   (local-set-key [(control return)] 'semantic-ia-complete-symbol)
+;   (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu)
+;   (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
+;   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle))
+; (add-hook 'c-mode-common-hook 'my-cedet-hook)
+
 
 (defun my-cperl-customizations ()
   "cperl-mode customizations that must be done after cperl-mode loads"
@@ -147,7 +176,31 @@
                               icicle-top-level-key-bindings))
                     (setq icicle-top-level-key-bindings my-icicle-top-level-key-bindings) )))
 
-(icy-mode)
+; (icy-mode)
+;(require 'sr-speedbar)
+;(setq sr-speedbar-width-x 40)
+
+;(add-to-list 'load-path "~/.emacs.d/emacs-rails")
+;  (require 'rails-autoload)
+;(require 'rails)
+
+; (add-to-list 'load-path "~/.emacs.d/ecb-snap")
+; (require 'ecb)
+; (setq ecb-use-speedbar-instead-native-tree-buffer t)
+
+
+       ;; Rinari
+;       (add-to-list 'load-path "~/.emacs.d/rinari/rinari")
+;       (require 'rinari)
+
+     (setq
+      nxhtml-global-minor-mode t
+      mumamo-chunk-coloring 'submode-colored
+      nxhtml-skip-welcome t
+      indent-region-mode t
+      rng-nxml-auto-validate-flag nil
+      nxml-degraded t)
+     (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . eruby-nxhtml-mumamo))
 
 
 ;)
@@ -350,3 +403,23 @@ that was stored with ska-point-to-register."
 ;=============================================================================
 ;(load "zeitgeist.el")
 
+(add-to-list 'load-path "~/.emacs.d/el-get/emacs-helm")
+(require 'helm-config)
+;(toggle-debug-on-error)
+
+;    (:name emacs-helm
+;           :type git
+;           :url "https://github.com/emacs-helm/helm"
+;           :features helm-config
+;;	   :after (lambda () (helm-mode 1))
+;           )
+
+(add-to-list 'load-path "~/.emacs.d/Sepia-0.992")
+(setq sepia-perl5lib (list (expand-file-name "~/.emacs.d/Sepia-0.992/lib")))
+(defalias 'perl-mode 'sepia-mode)
+(require 'sepia)
+
+;(setq inferior-lisp-program "/bin/sbcl")
+;(require 'slime-autoloads)
+;(require 'slime)
+;(slime-setup)

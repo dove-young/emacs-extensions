@@ -7,13 +7,25 @@
 
 ;(eval-when-compile    (require 'color-theme))
 
+; info-read
+; Green Kingsajz; Deep Blue; Dark Green; Sitaram Solaris; Parus;
+; Ryerson
+
+; Dark
+; Comidia; Clarity and Beauty; Billw; Arjen; Taming Mr Arneson;
+; Linh Dang Dark;
+
+; Euphoria; Oswald;  
+; WordPerfect; Lawrence; Hober;
+
 (defun my-color-theme ()
   "Color theme by U-IBM-0ADFC3DF773\dove, created 2010-04-09."
   (interactive)
   (color-theme-install
    '(my-color-theme
 ;     ((background-color . "#102C29")
-     ((background-color . "darkslategrey")
+     ((background-color . "#002942")
+;     ((background-color . "darkslategrey")
 ;     (( background-color . "black")
       (background-mode . dark)
       (border-color . "black")
@@ -318,7 +330,7 @@
      (org-checkbox-statistics-done ((t (:bold t :weight bold :foreground "PaleGreen"))))
      (org-checkbox-statistics-todo ((t (:bold t :weight bold :foreground "Pink"))))
      (org-clock-overlay ((t (:background "SkyBlue4"))))
-     (org-code ((t (:foreground "grey70"))))
+     (org-code ((t (:foreground "grey70" :family "DejaVu Sans Mono"))))
      (org-column ((t (:background "grey30" :strike-through nil :underline nil :slant normal :weight normal :height 173 :family "Fixed"))))
      (org-column-title ((t (:bold t :background "grey30" :underline t :weight bold))))
      (org-date ((t (:foreground "Cyan" :underline t))))
@@ -342,7 +354,7 @@
      (org-meta-line ((t (:foreground "LightBlue"))))
      (org-mode-line-clock ((t (:box (:line-width -1 :style released-button) :foreground "wheat" :background "dark olive green"))))
      (org-property-value ((t (nil))))
-     (org-quote ((t (:foreground "grey70"))))
+     (org-quote ((t (:foreground "grey70" :family "DejaVu Sans Mono"))))
      (org-scheduled ((t (:foreground "PaleGreen"))))
      (org-scheduled-previously ((t (:foreground "chocolate1"))))
      (org-scheduled-today ((t (:foreground "PaleGreen"))))
@@ -355,7 +367,7 @@
      (org-todo ((t (:bold t :foreground "Pink" :weight bold))))
      (org-upcoming-deadline ((t (:foreground "chocolate1"))))
      (org-verbatim ((t (:foreground "grey70"))))
-     (org-verse ((t (:foreground "grey70"))))
+     (org-verse ((t (:foreground "grey70" :family "DejaVu Sans Mono"))))
      (org-warning ((t (:bold t :weight bold :foreground "red"))))
      (outline-1 ((t (:bold t :weight bold :foreground "Aquamarine"))))
      (outline-2 ((t (:bold t :weight bold :foreground "Aquamarine"))))
@@ -417,6 +429,13 @@
 ;	    (color-theme-sitaramv-solaris)) t)
 	    (my-color-theme)) t)
 
+(my-color-theme)
+
+(defun reader_color_theme ()
+  (interactive)
+  (color-theme-gnome2)
+;  (my-color-theme)
+)
 
 ;(if window-system
 ;    (progn

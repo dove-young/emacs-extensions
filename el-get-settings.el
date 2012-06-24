@@ -23,108 +23,125 @@
 (setq
   el-get-sources
   '(el-get
-    auctex
-    auto-complete
-    anything
-    browse-kill-ring
-    buffer-move
-    dired+
-    bookmark+
-;    basic-mode
-;    crontab-mode
-;    csv-mode
-    tabbar
-    psvn
-    switch-window
-    yasnippet
-    hide-region
-    (:name menu-bar+
-           :type emacswiki
-           :features menu-bar+)
-    (:name dired-sort-menu
-           :type emacswiki
-           :features dired-sort-menu)
-;    dired-sort-menu+
-    (:name dired-sort
-           :type emacswiki
-           :features dired-sort)
-    (:name session
-           :post-init (lambda () (add-hook 'after-init-hook 'session-initialize)))
-    (:name emacs-w3m
-           :type emacswiki
-           :features w3m-load
-           :after mime-w3m)
-    (:name rfc
-           :type emacswiki
-           :build ("sed -i -e 's/ (require.*w3)/;&/' rfc.el")
-           :features rfc
-           :load ("../../rfcview.el")
-           :after (lambda () 
-                    (setq rfc-url-save-directory "~/rfc")
-                    (setq rfc-index-url "http://www.ietf.org/rfc/rfc-index.txt")
-                    (setq rfc-archive-alist (list (concat rfc-url-save-directory "/rfc.zip")
-                                                  rfc-url-save-directory
-                                                  "http://www.ietf.org/rfc/"))
-                    (setq rfc-insert-content-url-hook '(rfc-url-save))
-                    (add-hook 'rfc-index-mode-hook 'rfcview-mode)))
-
-    (:name move-text
-           :type emacswiki
-           :features move-text)
-
+;;     auctex
+;; ;    auto-complete
+;; ;    anything
+;; ;    anything-config
+;; ;    anything-complete
+;; ;    anything-grep
+;;     basic-mode
+;;     browse-kill-ring
+;;     buffer-move
+;;     bookmark+
+;; ;    crontab-mode
+;;     css-mode
+;; ;    csv-mode
+     (:name dired%2b 
+            :type emacswiki
+            :load ("dired%2b.el"))
+;; ;    dired%2b    ; icicles depends on this package
+;; ;    nxhtml
+;; ;    ecb
+     hide-region
+;;     magit
+;;     tabbar
+     psvn
+;;     rinari
+;; ;    sr-speedbar
+;; ;    sunrise-commander
+     switch-window
+;;     yasnippet
+;;     (:name menu-bar+
+;;            :type emacswiki
+;;            :features menu-bar+)
+;;     (:name dired-sort-menu
+;;            :type emacswiki
+;; n           :features dired-sort-menu)
+;; ;    dired-sort-menu+
+;;     (:name dired-sort
+;;            :type emacswiki
+;;            :features dired-sort)
+;;     (:name session
+;;            :post-init (lambda () (add-hook 'after-init-hook 'session-initialize)))
+;;  ;   (:name emacs-w3m
+;;  ;          :type emacswiki
+;;  ;          :features w3m-load
+;;  ;          :after mime-w3m)
+;; ;    (:name rfc
+;; ;           :type emacswiki
+;; ;           :build ("sed -i -e 's/ (require.*w3)/;&/' rfc.el")
+;; ;           :features rfc
+;; ;           :load ("../../rfcview.el")
+;; ;           :after (lambda () 
+;; ;                    (setq rfc-url-save-directory "~/rfc")
+;; ;                    (setq rfc-index-url "http://www.ietf.org/rfc/rfc-index.txt")
+;; ;                    (setq rfc-archive-alist (list (concat rfc-url-save-directory "/rfc.zip")
+;; ;                                                  rfc-url-save-directory
+;; ;                                                  "http://www.ietf.org/rfc/"))
+;; ;                    (setq rfc-insert-content-url-hook '(rfc-url-save))
+;; ;                    (add-hook 'rfc-index-mode-hook 'rfcview-mode)))
+;; ;
+     (:name move-text
+            :type emacswiki
+            :features move-text)
+ 
     (:name orgmode
            :type http-tar
-           :url "file:///home/dove/.emacs.d/org-7.6.tar.gz"
+           :url "file:///home/dove/Downloads/org-7.8.11.tar.gz"
            :options ("xzf")
-           :info "./org-7.6/doc"
-           :build ("cd ./org-7.6; make")
-           :load-path ("./lisp")
+           :info "./org-7.8.11/doc"
+           :build ("cd ./org-7.8.11; make")
+           :load-path ("./org-7.8.11/lisp")
            :features org-install)
-
-    (:name haskell-mode
-         :type http-tar
-         :options ("xzf")
-         :url "file:///home/dove/.emacs.d/haskell-mode-2.8.0.tar.gz"
-;         :url "http://projects.haskell.org/haskellmode-emacs/haskell-mode-2.8.0.tar.gz"
-         :load "haskell-site-file.el"
-         :after (lambda ()
-                  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-                  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
-    (:name oddmuse                  ; the mode used to edit Emacswiki pages
-           :type emacswiki
-           :features oddmuse
-           :after (lambda () 
-                    (setq oddmuse-username "DavidYoung")
-                    (setq oddmuse-wiki "EmacsWiki")))
-
-    (:name Emacs-PDE
-           :type http-tar
-           :url "file:///home/dove/.emacs.d/Emacs-PDE-0.2.16.tar.gz"
-           :options ("xzf")
-           :info "./lisp/doc"
-           :build ("rm lisp/contrib/tabbar.el" "sed -i -e '/(global-set-key/d' lisp/pde-load.el" "perl Makefile.PL" "make")
-           :load-path ("./lisp")
-           :features pde-load)        
+;; 
+;; ;    (:name haskell-mode
+;; ;         :type http-tar
+;; ;         :options ("xzf")
+;; ;         :url "file:///home/dove/.emacs.d/haskell-mode-2.8.0.tar.gz"
+;; ;;         :url "http://projects.haskell.org/haskellmode-emacs/haskell-mode-2.8.0.tar.gz"
+;; ;         :load "haskell-site-file.el"
+;; ;         :after (lambda ()
+;; ;                  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+;; ;                  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
+;;     (:name oddmuse                  ; the mode used to edit Emacswiki pages
+;;            :type emacswiki
+;;            :features oddmuse
+;;            :after (lambda () 
+;;                     (setq oddmuse-username "DavidYoung")
+;;                     (setq oddmuse-wiki "EmacsWiki")))
+;; 
+     (:name Emacs-PDE
+            :type http-tar
+            :url "file:///home/dove/.emacs.d/Emacs-PDE-0.2.16.tar.gz"
+            :options ("xzf")
+            :info "./lisp/doc"
+            :build ("rm lisp/contrib/tabbar.el" "sed -i -e '/(global-set-key/d' lisp/pde-load.el" "perl Makefile.PL" "make")
+            :load-path ("./lisp")
+            :features pde-load)        
     (:name icicles
            :type git
            :url "git://github.com/emacsmirror/icicles.git"
            :features icicles
-;           :after (lambda() (icy-mode))
+           :after (lambda() (icy-mode))
            )
-    (:name hexrgb
-           :type emacswiki
-           :features hexrgb)
-
-    (:name cedet
-           :type bzr
-           :url "bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk"
-           :build ("make")
-           :features cedet
-           :load-path ("./common" "./semantic")
-           :post-init (lambda () (global-ede-mode 1))
-           )
+;;     (:name hexrgb
+;;            :type emacswiki
+;;            :features hexrgb)
+     (:name sunrise-commander-github
+            :type git
+            :url "git://github.com/escherdragon/sunrise-commander.git"
+            :features sunrise-commander
+            )
+;; ;    (:name cedet
+;; ;           :type bzr
+;; ;           :url "bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk"
+;; ;           :build ("make")
+;; ;           :features cedet
+;; ;           :load-path ("./common" "./semantic")
+;; ;           :post-init (lambda () (global-ede-mode 1))
+;; ;           )
 ))
 
-;(el-get 'sync)
 (el-get)
+;(el-get 'sync)
                             
