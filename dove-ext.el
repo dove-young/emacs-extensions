@@ -275,51 +275,43 @@
             (string= x major-mode))
   dove-auto-paste-mode-list))
 
-(defmacro copy-something (begin-fn end-fn arg)
+(defmacro copy-something-to-mark (begin-fn end-fn arg)
   `(progn (copy-thing  ,begin-fn ,end-fn ,arg)
           (paste-to-mark 'dove-paste-condition ,arg)))
 
-; (macroexpand '(copy-something 
+; (macroexpand '(copy-something-to-mark 
 ;                beginning-of-string end-of-string arg))
 
+
+
 (defun copy-line (&optional arg)
- "Copy lines at point and paste them to mark
-
-With prefix 1, copy but not paste.
-with prefix N, copy N lines from the point."
-
+ "Copy lines at point and paste them to mark"
  (interactive "P")
- (copy-something 'beginning-of-line 'end-of-line arg))
+ (copy-something-to-mark 'beginning-of-line 'end-of-line arg))
+
+; (progn 
+;   (copy-thing 'beginning-of-line 'end-of-line arg) 
+;   (paste-to-mark (quote dove-paste-condition) arg)))
+
 
 (defun copy-word (&optional arg)
- "Copy words at point and paste them to mark
-
-With prefix 1, copy but not paste.
-with prefix N, copy N words from the point."
-
+ "Copy words at point and paste them to mark"
   (interactive "P")
-  (copy-something 'backward-word 'forward-word arg))
+  (copy-something-to-mark 'backward-word 'forward-word arg))
 
 (defun copy-paragraph (&optional arg)
- "Copy paragraphes at point and paste them to mark
-
-With prefix 1, copy but not paste.
-with prefix N, copy N paragraphs from the point."
-
+ "Copy paragraphes at point and paste them to mark"
   (interactive "P")
-  (copy-something 'backward-paragraph 'forward-paragraph arg))
+  (copy-something-to-mark 'backward-paragraph 'forward-paragraph arg))
 
 (defun thing-copy-string-to-mark(&optional arg)
-  "Copy string at point or region selected and paste them to mark
-
-With prefix 1, copy but not paste.
-with prefix N, copy N strings from the point."
-
+  "Copy string at point or region selected and paste them to mark"
   (interactive "P")
-  (cond                   ; This cannot be done by copy-something macro
+  (cond                   ; This cannot be done by copy-something-to-mark macro
    ((and mark-active transient-mark-mode)
     (pop-mark))
    (t
+;    (copy-something-to-mark 'beginning-of-string 'end-of-string arg)))
     (copy-thing 'beginning-of-string 'end-of-string arg)))
   (paste-to-mark 'dove-paste-condition arg))
 
@@ -330,7 +322,7 @@ with prefix N, copy N strings from the point."
 Automatic due with nesting {[(<\"''\">)]} characters"
 
   (interactive "P")
-  (copy-something 'beginning-of-parenthesis 'end-of-parenthesis arg))
+  (copy-something-to-mark 'beginning-of-parenthesis 'end-of-parenthesis arg))
 
 
 (defun duplicate-line(&optional arg)
@@ -352,32 +344,6 @@ Automatic due with nesting {[(<\"''\">)]} characters"
     (delete-region beg end)
     )
 )
-
-;; (defun copy-string-to-mark (&optional arg)
-;;  "Copy a sequence of string into kill-ring and then paste to the mark point"
-;;   (interactive "P")
-;;   (let (
-;;	 (onPoint (point))
-;;	 )
-;;     (let (
-;;
-;;	 ( beg 	(progn (re-search-backward "[\t ]" (line-beginning-position) 3 1)
-;;			  (if (looking-at "[\t ]") (+ (point) 1) (point) ) )
-;;		)
-;;          ( end  (progn  (goto-char onPoint) (re-search-forward "[\t ]" (line-end-position) 3 1)
-;;			  (if (looking-back "[\t ]") (- (point) 1) (point) ) )
-;;		 )
-;;	  )
-;;       (copy-region-as-kill beg end)
-;;       (message "%s" major-mode)
-;;       (if (string= "shell-mode" major-mode)
-;;	   (progn (comint-next-prompt 25535) (yank))
-;;	 ;; unless arg == 0, paste content to mark, else hold in kill ring
-;;	   (unless (> (or arg 0) 0) (progn (goto-char (mark)) (yank) )))
-;;
-;;       )
-;;     )
-;; )
 
 
 (defun beginning-of-string(&optional arg)
@@ -835,6 +801,24 @@ Parenthesis character was defined by beginning-of-parenthesis"
                  (concat "</pre>\n" "#+END_HTML\n")))
 
 
+(defmacro dove-org-babel-shortcut-para (str-begin str-end &optional arg)
+  `(i-babel-quote (+ (progn (backward-paragraph) (point)) 1)
+                  (- (progn (forward-paragraph arg) (point)) 1)
+                  ,str-begin ,str-end))
+
+               
+(defun iexp-para (&optional arg)
+  "Enclose code at point for org-mode"
+  (interactive "P")
+  (dove-org-babel-shortcut-para "#+BEGIN_EXAMPLE" "#+END_EXAMPLE" arg))
+
+
+(defun isrc-para (&optional arg)
+  "Enclose code at point for org-mode"
+  (interactive "P")
+  (dove-org-babel-shortcut-para "#+begin_src " "#+end_src" arg))
+
+
 (defmacro dove-org-babel-shortcut (St Ed x)
   `(cond
    ((and mark-active transient-mark-mode)
@@ -970,6 +954,9 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+(defun sdcv (&optional arg)
+  "sdcv dictionary plugin"
+  (interactive "P")
+  (shell-command (concat "sdcv " (current-word nil nil))))
 
 (provide 'dove-ext)
