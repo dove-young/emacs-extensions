@@ -688,29 +688,13 @@ Parenthesis character was defined by beginning-of-parenthesis"
 
 (defmacro dove-roll-3-buffers (sort_fn)
   `(progn (select-window (get-largest-window))
-    (if (= 3 (length (window-list)))
-        (let ((winList (window-list))
-              (bufList (mapcar 'window-buffer (window-list))))
-;              (bufList (nreverse (mapcar 'window-buffer (window-list))))
-          (message "winList = %s" winList)
-          (message "bufList = %s" bufList)
-
-;          (let ((newBufList (append (cdr bufList) (list (car bufList))))
-          (let ((newBufList (funcall ,sort_fn bufList))
-                )
-          (message "newBufList = %s" newBufList)
-          (message "bufListLength = %d" (length bufList))
-          (message "newBufListLength = %d" (length newBufList))
-                        
-          (mapcar* (lambda (win buf)
-                    "set bufffer to window"
-                    (message "win = %s" win)
-                    (message "buf = %s" buf)
-                    (set-window-buffer win buf)
-                    )
-                  winList newBufList))))))
-
-
+          (if (= 3 (length (window-list)))
+              (let ((winList (window-list))
+                    (bufferList (funcall ,sort_fn (mapcar 'window-buffer (window-list)))))
+                (mapcar* (lambda (win buf) 
+                           "set bufffer to window"
+                           (set-window-buffer win buf))
+                         winList bufferList)))))
 
 ;          (let ((1stWin (car winList))
 ;                (2ndWin (car (cdr winList)))
