@@ -356,7 +356,7 @@ Automatic due with nesting {[(<\"''\">)]} characters"
 (defun end-of-string(&optional arg)
   " "
   (re-search-forward "[ \t,]" (line-end-position) 3 arg)
-	     (if (looking-back "[,\t ]") 
+	     (if (looking-back "[,;\.\t ]") 
                  (goto-char (- (point) 1)) 
                (point))
 )
@@ -533,6 +533,8 @@ Parenthesis character was defined by beginning-of-parenthesis"
 (defun change-split-type ()
   "Changes splitting from vertical to horizontal and vice-versa"
   (interactive)
+  (message "%s --> %d" (window-list) (length (window-list)))
+
   (if (= 2 (length (window-list)))
       (let ((thisBuf (window-buffer))
             (nextBuf (progn (other-window 1) (buffer-name)))
@@ -682,31 +684,64 @@ Parenthesis character was defined by beginning-of-parenthesis"
 ;  +------------------------+                     +------------------------+ 
 
 
-(defmacro dove-roll-3-buffers (buf_1 buf_2 buf_3)
+;(defmacro dove-roll-3-buffers (buf_1 buf_2 buf_3)
+
+(defmacro dove-roll-3-buffers (sort_fn)
   `(progn (select-window (get-largest-window))
     (if (= 3 (length (window-list)))
-        (let ((winList (window-list)))
-          (let ((1stWin (car winList))
-                (2ndWin (car (cdr winList)))
-                (3rdWin (car (cdr (cdr winList)))))
-            (let ((1stBuf (window-buffer 1stWin))
-                  (2ndBuf (window-buffer 2ndWin))
-                  (3rdBuf (window-buffer 3rdWin)))
-              (set-window-buffer 1stWin ,buf_1)
-              (set-window-buffer 2ndWin ,buf_2)
-              (set-window-buffer 3rdWin ,buf_3)))))))
+        (let ((winList (window-list))
+              (bufList (mapcar 'window-buffer (window-list))))
+;              (bufList (nreverse (mapcar 'window-buffer (window-list))))
+          (message "winList = %s" winList)
+          (message "bufList = %s" bufList)
+
+;          (let ((newBufList (append (cdr bufList) (list (car bufList))))
+          (let ((newBufList (funcall ,sort_fn bufList))
+                )
+          (message "newBufList = %s" newBufList)
+          (message "bufListLength = %d" (length bufList))
+          (message "newBufListLength = %d" (length newBufList))
+                        
+          (mapcar* (lambda (win buf)
+                    "set bufffer to window"
+                    (message "win = %s" win)
+                    (message "buf = %s" buf)
+                    (set-window-buffer win buf)
+                    )
+                  winList newBufList))))))
+
+
+
+;          (let ((1stWin (car winList))
+;                (2ndWin (car (cdr winList)))
+;                (3rdWin (car (cdr (cdr winList)))))
+;            (let ((1stBuf (window-buffer 1stWin))
+;                  (2ndBuf (window-buffer 2ndWin))
+;                  (3rdBuf (window-buffer 3rdWin)))
+;              (set-window-buffer 1stWin ,buf_1)
+;              (set-window-buffer 2ndWin ,buf_2)
+;              (set-window-buffer 3rdWin ,buf_3)))))))
 
 ; (macroexpand-all '(dove-roll-3-buffers '3rdBuf '1stBuf '2ndBuf))
 
 (defun roll-3-buffers-anti-clockwise ()
   "Roll 3 window buffers anti-clockwise"
   (interactive)
-  (dove-roll-3-buffers 3rdBuf 1stBuf 2ndBuf))
+  (dove-roll-3-buffers '(lambda (bufList)  ; put the last to the first
+                         (cons (car (last bufList)) (butlast bufList)))
+                       ))
+
+;  (dove-roll-3-buffers 3rdBuf 1stBuf 2ndBuf))
 
 (defun roll-3-buffers-clockwise ()
   "Roll 3 window buffers clockwise"
   (interactive)
-  (dove-roll-3-buffers 2ndBuf 3rdBuf 1stBuf))
+  (dove-roll-3-buffers '(lambda (bufList)  ; put the first to the last
+                         (append (cdr bufList) (list (car bufList))))
+                       ))
+
+
+;  (dove-roll-3-buffers 2ndBuf 3rdBuf 1stBuf))
 
 ;(defun dove-hide-shell-output()
 ;  "Hide Shell Output"
