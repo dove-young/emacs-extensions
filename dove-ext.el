@@ -530,24 +530,14 @@ Parenthesis character was defined by beginning-of-parenthesis"
 
 
 
-(defun change-split-type ()
+(defun change-split-type (&optional arg)
   "Changes splitting from vertical to horizontal and vice-versa"
-  (interactive)
-  (message "%s --> %d" (window-list) (length (window-list)))
-
-  (if (= 2 (length (window-list)))
-      (let ((thisBuf (window-buffer))
-            (nextBuf (progn (other-window 1) (buffer-name)))
-            (split-type (if (= (window-width)
-                               (frame-width))
-                            'split-window-horizontally
-                            'split-window-vertically)))
-        (progn
-          (delete-other-windows)
-	  (funcall split-type)
-          (set-window-buffer nil thisBuf)
-          (set-window-buffer (next-window) nextBuf)))))
-
+  (interactive "P")
+  (let ((split-type (lambda (&optional arg)
+                      (delete-other-windows-internal)
+                      (if arg (split-window-vertically)
+                        (split-window-horizontally)))))
+    (change-split-type-3 split-type arg)))
 
 
 ;  +-----------------------+                  +----------- +-----------+ 
@@ -566,40 +556,79 @@ Parenthesis character was defined by beginning-of-parenthesis"
 ;  |            |           |                 |            |           | 
 ;  +----------- +-----------+                 +------------------------+ 
 
-(defun change-split-type-3 ()
+(defun change-split-type-3 (split-fn &optional arg)
   "Change 3 window style from horizontal to vertical and vice-versa"
-  (interactive)
-  (select-window (get-largest-window))
-  (if (= 3 (length (window-list)))
-      (let ((winList (window-list)))
-        (let ((1stBuf (window-buffer (car winList)))
-              (2ndBuf (window-buffer (car (cdr winList))))
-              (3rdBuf (window-buffer (car (cdr (cdr winList)))))
+;  (interactive "P")
+  (let ((bufList (mapcar 'window-buffer (window-list))))
+    (select-window (get-largest-window))
+    (funcall split-fn arg)
+;    (if arg (split-window-3-vertically arg)
+;      (split-window-3-horizontally arg))
+    (mapcar* 'set-window-buffer (window-list) bufList)))
 
-              (split-3 
-               (lambda(1stBuf 2ndBuf 3rdBuf split-1 split-2)
-                 "change 3 window from horizontal to vertical and vice-versa"
-                 (message "%s %s %s" 1stBuf 2ndBuf 3rdBuf)
-                 
-                     (delete-other-windows)
-                     (funcall split-1)
-                     (set-window-buffer nil 2ndBuf)
-                     (funcall split-2)
-                     (set-window-buffer (next-window) 3rdBuf)
-                     (other-window 2)
-                     (set-window-buffer nil 1stBuf)))         
+(defun change-split-type-3-v (&optional arg)
+  "change 3 window style from horizon to vertical"
+  (interactive "P")
+  (change-split-type-3 'split-window-3-horizontally arg))
 
-                  (split-type-1 nil)
-                  (split-type-2 nil)
-                  )
-              (if (= (window-width) (frame-width))
-                  (setq split-type-1 'split-window-horizontally 
-                        split-type-2 'split-window-vertically)
-                (setq split-type-1 'split-window-vertically  
-                      split-type-2 'split-window-horizontally))
-              (funcall split-3 1stBuf 2ndBuf 3rdBuf split-type-1 split-type-2)
+(defun change-split-type-3-h (&optional arg)
+  "change 3 window style from vertical to horizon"
+  (interactive "P")
+  (change-split-type-3 'split-window-3-vertically arg))
 
-))))
+(defun split-window-3-horizontally (&optional arg)
+  "Split window into 3 while largest one is in horizon"
+  (interactive "P")
+  (delete-other-windows)
+  (split-window-horizontally)
+  (if arg (other-window 1))
+  (split-window-vertically))
+
+(defun split-window-3-vertically (&optional arg)
+  "Split window into 3 while largest one is in vertical"
+  (interactive "P")
+  (delete-other-windows)
+  (split-window-vertically)
+  (if arg (other-window 1))
+  (split-window-horizontally))
+
+;(defun change-split-type-3-1 ()
+;  (interactive)
+;  (change-split-type-3 'split-window-3-vertically))
+;
+;(defun change-split-type-3-2 ()
+;  (interactive)
+;  (change-split-type-3 'split-window-3-horizontally))
+
+
+;        (let ((1stBuf (window-buffer (car winList)))
+;              (2ndBuf (window-buffer (car (cdr winList))))
+;              (3rdBuf (window-buffer (car (cdr (cdr winList)))))
+;
+;              (split-3 
+;               (lambda(1stBuf 2ndBuf 3rdBuf split-1 split-2)
+;                 "change 3 window from horizontal to vertical and vice-versa"
+;                 (message "%s %s %s" 1stBuf 2ndBuf 3rdBuf)
+;                 
+;                     (delete-other-windows)
+;                     (funcall split-1)
+;                     (set-window-buffer nil 2ndBuf)
+;                     (funcall split-2)
+;                     (set-window-buffer (next-window) 3rdBuf)
+;                     (other-window 2)
+;                     (set-window-buffer nil 1stBuf)))         
+;
+;                  (split-type-1 nil)
+;                  (split-type-2 nil)
+;                  )
+;              (if (= (window-width) (frame-width))
+;                  (setq split-type-1 'split-window-horizontally 
+;                        split-type-2 'split-window-vertically)
+;                (setq split-type-1 'split-window-vertically  
+;                      split-type-2 'split-window-horizontally))
+;              (funcall split-3 1stBuf 2ndBuf 3rdBuf split-type-1 split-type-2)
+;
+;))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -684,48 +713,28 @@ Parenthesis character was defined by beginning-of-parenthesis"
 ;  +------------------------+                     +------------------------+ 
 
 
-;(defmacro dove-roll-3-buffers (buf_1 buf_2 buf_3)
-
-(defmacro dove-roll-3-buffers (sort_fn)
+(defmacro dove-roll-buffers (sort_fn)
   `(progn (select-window (get-largest-window))
-          (if (= 3 (length (window-list)))
-              (let ((winList (window-list))
+              (let ((winList (window-list))  ; sort buffer list by plugin function sort_fn
                     (bufferList (funcall ,sort_fn (mapcar 'window-buffer (window-list)))))
                 (mapcar* (lambda (win buf) 
                            "set bufffer to window"
                            (set-window-buffer win buf))
-                         winList bufferList)))))
-
-;          (let ((1stWin (car winList))
-;                (2ndWin (car (cdr winList)))
-;                (3rdWin (car (cdr (cdr winList)))))
-;            (let ((1stBuf (window-buffer 1stWin))
-;                  (2ndBuf (window-buffer 2ndWin))
-;                  (3rdBuf (window-buffer 3rdWin)))
-;              (set-window-buffer 1stWin ,buf_1)
-;              (set-window-buffer 2ndWin ,buf_2)
-;              (set-window-buffer 3rdWin ,buf_3)))))))
-
-; (macroexpand-all '(dove-roll-3-buffers '3rdBuf '1stBuf '2ndBuf))
+                         winList bufferList))))
 
 (defun roll-3-buffers-anti-clockwise ()
   "Roll 3 window buffers anti-clockwise"
   (interactive)
-  (dove-roll-3-buffers '(lambda (bufList)  ; put the last to the first
-                         (cons (car (last bufList)) (butlast bufList)))
-                       ))
-
-;  (dove-roll-3-buffers 3rdBuf 1stBuf 2ndBuf))
+  (if (= 3 (length (window-list)))
+      (dove-roll-buffers '(lambda (bufList)  ; put the last to the first
+                              (cons (car (last bufList)) (butlast bufList))))))
 
 (defun roll-3-buffers-clockwise ()
   "Roll 3 window buffers clockwise"
   (interactive)
-  (dove-roll-3-buffers '(lambda (bufList)  ; put the first to the last
-                         (append (cdr bufList) (list (car bufList))))
-                       ))
-
-
-;  (dove-roll-3-buffers 2ndBuf 3rdBuf 1stBuf))
+  (if (= 3 (length (window-list)))
+      (dove-roll-buffers '(lambda (bufList)  ; put the first to the last
+                              (append (cdr bufList) (list (car bufList)))))))
 
 ;(defun dove-hide-shell-output()
 ;  "Hide Shell Output"
