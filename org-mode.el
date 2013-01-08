@@ -17,6 +17,33 @@
 ;(setq org-return-follows-link t)
 ;(require 'org-babel-init)
 
+(require 'org-latex)
+(unless (boundp 'org-export-latex-classes)
+  (setq org-export-latex-classes nil))
+; (add-to-list 'org-export-latex-classes
+;              '("article"
+;                "\\documentclass{article}"
+;                ("\\section{%s}" . "\\section*{%s}")))
+
+(add-to-list 'org-export-latex-classes
+             '("article"
+               "\\documentclass{article}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+(add-to-list 'org-export-latex-classes
+             `("book"
+               "\\documentclass{book}"
+               ("\\part{%s}" . "\\part*{%s}")
+               ("\\chapter{%s}" . "\\chapter*{%s}")
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+             )
+
 ;(add-hook 'org-mode-hook
 ;           (setq system-time-locale "C"))
 ;	  (setq org-indent-mode nil))
