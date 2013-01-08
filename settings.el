@@ -63,10 +63,18 @@
       sr-speedbar-width-x                                40
       dired-omit-mode                                    1
       linum-mode                                         1
+      magit-repo-dirs-depth                              0
+      nxhtml-global-minor-mode                           t
+      mumamo-chunk-coloring                              'submode-colored
+      nxhtml-skip-welcome                                t
+      indent-region-mode                                 t
+      rng-nxml-auto-validate-flag                        nil 
+      cperl-tags-file-name                               "PDE-TAGS"
+      ispell-program-name                                "aspell"
 )
 
 ;(setq dired-auto-revert-buffer t)
-(setq ispell-program-name "aspell")
+;(setq ispell-program-name "aspell")
 ; hippie mode remember an anchor then jump back
 (setq hippie-expand-try-functions-list 
       '(try-expand-dabbrev
@@ -176,3 +184,4 @@
 
 (setq auto-mode-alist (cons '("[^/]\\.dired$" . dired-virtual-mode)
                                    auto-mode-alist))
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
