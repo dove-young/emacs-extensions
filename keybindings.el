@@ -8,9 +8,12 @@
 
 (global-set-key (kbd "C-z") nil)
 
+(global-set-key (kbd "<S-right>") 'tabbar-forward-tab)
+(global-set-key (kbd "<S-left>") 'tabbar-backward-tab)
+
 (set-key-bindings 'global-set-key	
  (list 
-	 '([f2] calendar)
+;	 '([f2] calendar)
 	 '([(shift f2)] remember)
 	 '([f3] artist-mode)
 	 '([f5] revert-buffer)
@@ -49,6 +52,7 @@
 	 `( ,(kbd "C-c p") copy-paragraph)
 	; `( ,(kbd "C-x a q") copy-in-quote-to-mark)   ;; deprecated. use "copy-symbol-to-mark"
 	 `( ,(kbd "C-x a d") delete-region)
+	 `( ,(kbd "C-S-d") delete-backward-char)
 
 	 `( ,(kbd "M-F")   forward-symbol)
 	 `( ,(kbd "M-B")   backward-symbol)
@@ -68,13 +72,18 @@
 	 `( ,(kbd "C-c j") jump)
 
 	 `( ,(kbd "C-x 4 4") split-window-4)
-	 `( ,(kbd "C-x 4 c") change-split-type)
+	 `( ,(kbd "C-x 4 c") ,(lambda (&optional arg)
+                                (interactive "P")
+                                (if (= 2 (length (window-list)))
+                                    (change-split-type-2 arg)
+                                  (change-split-type-3-v arg))))
+	 `( ,(kbd "C-x 4 C") change-split-type-3-h)
 	;`( ,(kbd "C-x 4 v") split-v)
-	 `( ,(kbd "C-x 4 C") change-split-type-3)
 	;`( ,(kbd "C-x 4 V") split-v-3)
 ;	 `( ,(kbd "C-x 4 r") roll-v-3)
-	 `( ,(kbd "C-x 4 r") roll-3-buffers-clockwise)
-	 `( ,(kbd "C-x 4 R") roll-3-buffers-anti-clockwise)
+	 `( ,(kbd "C-x 4 r") roll-3-buffers)
+;	 `( ,(kbd "C-x 4 r") roll-3-buffers-clockwise)
+;	 `( ,(kbd "C-x 4 R") roll-3-buffers-anti-clockwise)
 
 	 `( ,(kbd "C-x r p") string-insert-rectangle)
 
@@ -158,9 +167,15 @@
 
 )
 
+(add-hook 'sr-mode-hook
+          (lambda ()
+            (define-key sr-mode-map "j" 'dired-goto-file)))
+
 (add-hook 'Info-mode-hook
           (dove-easy-scroll Info-mode-map))
-
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (define-key dired-mode-map "/" 'dired-goto-file)))
 ; (setq Info-mode-hook nil)
 ; (setq view-mode-hook nil)
 
@@ -191,7 +206,12 @@
 (add-hook 'slime-mode-hook 
           (lambda ()
             (set-key-bindings 'local-set-key 
-                              `( ,(kbd "C-c C-q") slime-close-all-parens-in-sexp))))
+                              `( ,(kbd "C-c C-q") 'slime-close-all-parens-in-sexp))))
 (add-hook 'Man-mode-hook
           (lambda ()
             (view-mode)))
+(global-set-key (kbd "C-x C-f") `helm-find-files)
+(add-hook 'vc-dir-mode-hook
+          (lambda ()
+            (define-key vc-dir-mode-map "d" 'vc-ediff)))
+                              

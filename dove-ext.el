@@ -573,6 +573,15 @@ Parenthesis character was defined by beginning-of-parenthesis"
 ;  +-----------------------+                  +----------- +-----------+ 
 
 
+(defun change-split-type-2 (&optional arg)
+  "Changes splitting from vertical to horizontal and vice-versa"
+  (interactive "P")
+  (let ((split-type (lambda (&optional arg)
+                      (delete-other-windows-internal)
+                      (if arg (split-window-vertically)
+                        (split-window-horizontally)))))
+    (message "win-0 %s" (window-list))
+    (change-split-type split-type arg)))
 
 (defun change-split-type (split-fn &optional arg)
   "Change 3 window style from horizontal to vertical and vice-versa"
@@ -700,19 +709,28 @@ Parenthesis character was defined by beginning-of-parenthesis"
                            (set-window-buffer win buf))
                          winList bufferList))))
 
-(defun roll-3-buffers-anti-clockwise ()
-  "Roll 3 window buffers anti-clockwise"
-  (interactive)
-  (if (= 3 (length (window-list)))
+(defun roll-3-buffers (&optional arg)
+  "Roll 3 window buffers clockwise and anti-clockwise"
+  (interactive "P")
+  (if arg 
       (dove-roll-buffers '(lambda (bufList)  ; put the last to the first
-                              (cons (car (last bufList)) (butlast bufList))))))
+                              (cons (car (last bufList)) (butlast bufList))))
+      (dove-roll-buffers '(lambda (bufList) ; put the first to the last
+                            (append (cdr bufList) (list (car bufList)))))))
 
-(defun roll-3-buffers-clockwise ()
-  "Roll 3 window buffers clockwise"
-  (interactive)
-  (if (= 3 (length (window-list)))
-      (dove-roll-buffers '(lambda (bufList)  ; put the first to the last
-                              (append (cdr bufList) (list (car bufList)))))))
+;; (defun roll-3-buffers-anti-clockwise ()
+;;   "Roll 3 window buffers anti-clockwise"
+;;   (interactive)
+;;   (if (= 3 (length (window-list)))
+;;       (dove-roll-buffers '(lambda (bufList)  ; put the last to the first
+;;                               (cons (car (last bufList)) (butlast bufList))))))
+;; 
+;; (defun roll-3-buffers-clockwise ()
+;;   "Roll 3 window buffers clockwise"
+;;   (interactive)
+;;   (if (= 3 (length (window-list)))
+;;       (dove-roll-buffers '(lambda (bufList)  ; put the first to the last
+;;                               (append (cdr bufList) (list (car bufList)))))))
 
 ;(defun dove-hide-shell-output()
 ;  "Hide Shell Output"
