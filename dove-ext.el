@@ -307,14 +307,11 @@
 (defun thing-copy-string-to-mark(&optional arg)
   "Copy string at point or region selected and paste them to mark"
   (interactive "P")
-  (cond                   ; This cannot be done by copy-something-to-mark macro
-   ((and mark-active transient-mark-mode)
-    (pop-mark))
-   (t
-;    (copy-something-to-mark 'beginning-of-string 'end-of-string arg)))
-    (copy-thing 'beginning-of-string 'end-of-string arg)))
+  (if (and mark-active transient-mark-mode)
+      (progn (copy-region-as-kill (mark) (point))
+             (pop-mark))
+    (copy-thing 'beginning-of-string 'end-of-string arg))
   (paste-to-mark 'dove-paste-condition arg))
-
 
 (defun thing-copy-parenthesis-to-mark(&optional arg)
  "Copy region between {[(<\"''\">)]} and paste them to mark
@@ -977,6 +974,18 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
     (re-search-forward (eval arg) ))
   )
 
+(defun find-file-and-goto-line (file-name &optional arg)
+  "find a file and goto specific line"
+  (interactive)
+  (let* ((lst (split-string file-name "[:]" t))
+         (f (car lst))
+         (l (string-to-int (car (last lst)))))
+    (if (file-exists-p f)
+        (progn
+          (find-file f)
+          (if (numberp l)
+              (goto-line l))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun sdcv (&optional arg)
@@ -985,3 +994,4 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
   (shell-command (concat "sdcv " (current-word nil nil))))
 
 (provide 'dove-ext)
+
