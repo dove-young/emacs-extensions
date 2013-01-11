@@ -13,7 +13,7 @@
 ;; hit C-j, and you have a working el-get.
 (unless (require 'el-get nil t)
  (url-retrieve
-  "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+  "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
   (lambda (s)
     (end-of-buffer)
     (eval-print-last-sexp))))
@@ -36,9 +36,17 @@
 ;; ;    crontab-mode
 ;;     css-mode
 ;; ;    csv-mode
-     (:name dired%2b 
-            :type emacswiki
-            :load ("dired%2b.el"))
+;    dired-details
+;    dired-details%2b
+;    simple-call-tree
+;    whitespace
+;    flymake-ruby
+    org-mode
+    tabbar-ruler
+    yaml-mode
+;     (:name dired%2b 
+;            :type emacswiki
+;            :load ("dired%2b.el"))
 ;; ;    dired%2b    ; icicles depends on this package
 ;; ;    nxhtml
 ;; ;    ecb
@@ -47,9 +55,8 @@
 ;;     tabbar
      psvn
 ;;     rinari
-;; ;    sr-speedbar
-;; ;    sunrise-commander
-     switch-window
+
+;     switch-window
 ;;     yasnippet
 ;;     (:name menu-bar+
 ;;            :type emacswiki
@@ -85,14 +92,14 @@
             :type emacswiki
             :features move-text)
  
-    (:name orgmode
-           :type http-tar
-           :url "file:///home/dove/Downloads/org-7.8.11.tar.gz"
-           :options ("xzf")
-           :info "./org-7.8.11/doc"
-           :build ("cd ./org-7.8.11; make")
-           :load-path ("./org-7.8.11/lisp")
-           :features org-install)
+;;    (:name orgmode
+;;           :type http-tar
+;;           :url "file:///home/dove/.emacs.d/org-7.9.2.tar.gz"
+;;           :options ("-xzf")
+;;           :info "./org-7.9.2/doc"
+;;           :build ("cd ./org-7.9.2; make")
+;;           :load-path ("./org-7.9.2/lisp")
+;;           :features org-install)
 ;; 
 ;; ;    (:name haskell-mode
 ;; ;         :type http-tar
@@ -124,14 +131,26 @@
            :features icicles
            :after (lambda() (icy-mode))
            )
-;;     (:name hexrgb
-;;            :type emacswiki
-;;            :features hexrgb)
-     (:name sunrise-commander-github
-            :type git
-            :url "git://github.com/escherdragon/sunrise-commander.git"
-            :features sunrise-commander
+;      (:name hexrgb
+;             :type emacswiki
+;             :features hexrgb)
+;     (:name sunrise-commander-github
+;            :type git
+;            :url "git://github.com/escherdragon/sunrise-commander.git"
+;            :features sunrise-commander
+;            )
+
+     (:name puppet-mode
+            :type git 
+            :url "https://github.com/puppetlabs/puppet-syntax-emacs.git"
+            :features puppet-mode
             )
+    (:name puppet-flymake
+           :type git 
+           :url "https://github.com/grimradical/puppet-flymake.git"
+           :features flymake-puppet
+           :after (add-hook 'puppet-mode-hook (lambda () (flymake-puppet-load)))
+           )
 ;; ;    (:name cedet
 ;; ;           :type bzr
 ;; ;           :url "bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk"
