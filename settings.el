@@ -13,13 +13,17 @@
 (display-time)
 ;(bbdb-initialize)
 (global-visual-line-mode 1)
-;(tabbar-mode)
-;(icy-mode 1)
+(tabbar-mode)
+(icy-mode 1)
 (read-abbrev-file "~/.abbrev_defs")
 (mouse-avoidance-mode 'jump)
 (auto-image-file-mode)
 (show-paren-mode t)
 
+;; Misc
+(setq-default abbrev-mode t
+	      line-spacing 4
+)
 
 (setq save-abbrevs                                       t
       x-select-enable-clipboard                          t
@@ -65,12 +69,16 @@
       linum-mode                                         1
       magit-repo-dirs-depth                              0
       nxhtml-global-minor-mode                           t
-      mumamo-chunk-coloring                              'submode-colored
       nxhtml-skip-welcome                                t
-      indent-region-mode                                 t
       rng-nxml-auto-validate-flag                        nil 
+      mumamo-chunk-coloring                              'submode-colored
+      indent-region-mode                                 t
       cperl-tags-file-name                               "PDE-TAGS"
       ispell-program-name                                "aspell"
+      eshell-where-to-jump                               'begin
+      eshell-review-quick-commands                       nil
+      eshell-smart-space-goes-to-end                     t
+
 )
 
 ;(setq dired-auto-revert-buffer t)
@@ -89,43 +97,19 @@
 	try-complete-lisp-symbol-partially
 	try-complete-lisp-symbol))
 
-
-;; Misc
-(setq-default abbrev-mode t
-	      line-spacing 4
-)
-
 (setenv "EMACSSHELL" shell-file-name)
-
-;(setq speedbar-use-images t)
 
 (eval-after-load 'speedbar
   '(progn
-     (speedbar-add-supported-extension ".sh")
-     (speedbar-add-supported-extension ".pl")
-     (speedbar-add-supported-extension ".pm")
-     (speedbar-add-supported-extension ".txt")
-     (speedbar-add-supported-extension ".rb")
-     (speedbar-add-supported-extension ".ru")
+     (mapc 'speedbar-add-supported-extension
+           '(".sh" ".pl" ".pm" ".txt" ".rb" ".ru"))
      (setq speedbar-frame-parameters '((minibuffer)
                                        (width . 30)
                                        (border-width . 0)
                                        (menu-bar-lines . 0)
                                        (tool-bar-lines . 0)
                                        (unsplittable . t)
-                                       (left-fringe . 0)))
-     ))
-  
-; http://www.emacswiki.org/emacs-zh/FillParagraph
-
- ;(setq paragraph-start "\\*\\|$" 
-;          paragraph-separate "$")
-; http://www.emacswiki.org/emacs-zh/AutoFillMode
-;;    (add-hook 'text-mode-hook
-;;              (lambda ()
-;;                (when (y-or-n-p "Auto Fill mode? ")
-;;                  (turn-on-auto-fill))))
-
+                                       (left-fringe . 0)))))
 
 (setq eshell-prompt-function (lambda nil
   (concat
@@ -133,7 +117,6 @@
 ;    (+ 1 
 ;       (ring-length eshell-history-ring))) " + "
    (format-time-string "%H:%M:%S")         " + "
-
    (let ((dir-list
           (split-string ;"~/Shell/branch_dev/agent_team/common" "/")))
            (abbreviate-file-name
@@ -149,39 +132,17 @@
         0)
        " # " " $ "))))
 
-  (require 'em-smart)
-  (setq eshell-where-to-jump 'begin)
-  (setq eshell-review-quick-commands nil)
-  (setq eshell-smart-space-goes-to-end t)
+(mapcar (lambda (setting)
+          (setq auto-mode-alist (cons setting auto-mode-alist)))
+'(("\\.xml$"          . sgml-mode)
+  ("\\.bash"          . sh-mode)
+  ("\\.rdf$"          . sgml-mode)
+  ("\\.session$"      . emacs-lisp-mode)
+  ("\\.l$"            . c-mode)
+  ("\\.css$"          . css-mode)
+  ("\\.cfm$"          . html-mode)
+  ("\\.gnus"          . emacs-lisp-mode)
+  ("\\.idl$"          . idl-mode)
+  ("[^/]\\.dired$"    . dired-virtual-mode)
+  ("\\.yml$"          . yaml-mode)))
 
-;(mapcar
-; (function (lambda (setting)
-;             (setq auto-mode-alist
-;                   (cons setting auto-mode-alist))))
-; '(("\\.xml$".  sgml-mode)
-;   ("\\\.bash" . sh-mode)
-;   ("\\.rdf$".  sgml-mode)
-;   ("\\.session" . emacs-lisp-mode)
-;   ("\\.l$" . c-mode)
-;   ("\\.css$" . css-mode)
-;   ("\\.cfm$" . html-mode)
-;   ("gnus" . emacs-lisp-mode)
-;   ("\\.idl$" . idl-mode)))
-
-
-;13:49:52 + ~ $ cd Shell/
-;13:49:58 + ~/Shell $ cd branch_dev/
-;13:50:01 + Shell/branch_dev $ cd agent_team/
-;13:50:03 + branch_dev/agent_team $ cd common/
-;13:50:06 + agent_team/common $ 
-
-
-;(setq eshell-prompt-regexp "
-;[0-9]+ \+ [0-9:]+ \+ .*
-;dove@eshell [$#]")
-
-;(setq eshell-prompt-regexp "^[0-9]+ \+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9] \+ .*\n[^#$\n]* [#$] ")                                             
-
-(setq auto-mode-alist (cons '("[^/]\\.dired$" . dired-virtual-mode)
-                                   auto-mode-alist))
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))

@@ -21,7 +21,6 @@
 (add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . eruby-nxhtml-mumamo))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;
 
 (setq outline-minor-mode-list 
       (list '(emacs-lisp-mode "(defun\\|(defvar\\|(defcustom\\|(defconst\\|(defmacro")
@@ -44,14 +43,22 @@
 
 
 (add-hook 'minibuffer-hook (setq blink-matching-paren nil))
+(add-hook 'find-file-hook (lambda () (linum-mode 1)))
+(add-hook 'help-mode-hook 'view-mode)
+(add-hook 'grep-mode-hook 'view-mode)
+(add-hook 'oddmuse-mode-hook
+          (lambda ()
+            (unless (string-match "question" oddmuse-post)
+              (when (string-match "EmacsWiki" oddmuse-wiki)
+                (setq oddmuse-post (concat "uihnscuskc=1;" oddmuse-post)))
+              (when (string-match "OddmuseWiki" oddmuse-wiki)
+                (setq oddmuse-post (concat "ham=1;" oddmuse-post))))))
 
 (eval-after-load 'shell
   '(progn
      (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
      (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
-     t
-     ))
-
+     t))
 
 (add-hook 'dired-load-hook
           (lambda ()
@@ -63,21 +70,6 @@
             ;; (setq dired-x-hands-off-my-keys nil)
             ))
 
-;; WinnerMode
-
-(when (fboundp 'winner-mode)
-  (winner-mode)
-  (windmove-default-keybindings))
-
-(add-hook 'find-file-hook (lambda () (linum-mode 1)))
-
-(load-library "hideshow")
-
-(when (fboundp 'windmove-default-keybindings)
-  (windmove-default-keybindings))
-
-(load "~/.emacs.d/mouse.el")
-
 (add-hook 'outline-mode-hook 
           (lambda () 
             (require 'outline-magic)))
@@ -86,11 +78,43 @@
           (lambda () 
             (require 'outline-magic)
             (define-key outline-minor-mode-map [(f2)] 'outline-cycle)))
+
+(add-hook 'after-make-frame-functions
+          (lambda(arg)
+            (if  (>= (length (frame-list)) 1)
+                (progn 
+                  (set-fontset-font  "fontset-startup" 'chinese-gbk 
+                                     (font-spec :family "文泉驿等宽微米黑" :size 16) nil 'prepend)
+                  (set-fontset-font  "fontset-startup" 'unicode-bmp 
+                                     (font-spec :family "Source Code Pro" :size 16) nil 'prepend)
+                  ))) t)
+
+;          (set-fontset-font  "fontset-startup" 'chinese-gbk (font-spec :family "文泉驿微米黑" :size 18) nil 'prepend)
+;          (set-fontset-font  "fontset-startup" 'unicode (font-spec :family "Liberation Mono" :size 16) nil 'prepend)
+;          (set-fontset-font  "fontset-startup" 'iso-8859-1 (font-spec :family "Liberation Mono" :size 16) nil 'prepend)
+
+;(font-family-list)
+
+;; WinnerMode
+
+(when (fboundp 'winner-mode)
+  (winner-mode)
+  (windmove-default-keybindings))
+
+(load-library "hideshow")
+
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings))
+
+;(load "~/.emacs.d/mouse.el")
+
 ;;
 ;; Setup puppet-mode for autoloading
 ;;
 (autoload 'puppet-mode "puppet-mode" "Major mode for editing puppet manifests")
 (add-to-list 'auto-mode-alist '("\\.pp$" . puppet-mode))
+
+;;;;;;;;;;;;;;;;;;;;; PDE Configuration ;;;;;;;;;;;;;;;;;;;;;;
 
 (defun my-cperl-customizations ()
   "cperl-mode customizations that must be done after cperl-mode loads"
@@ -108,7 +132,6 @@
        ((eq match "sub"    ) 5)
        (t 7)
        )))
-
                                         ;  (setq cperl-outline-regexp  my-cperl-outline-regexp)
   (setq outline-regexp        cperl-outline-regexp)
   (setq outline-level        'cperl-outline-level)
@@ -140,14 +163,6 @@
 (eval-after-load 'pde-load
   '(add-hook 'cperl-mode-hook 'my-cperl-customizations t))
 
-(add-hook 'oddmuse-mode-hook
-          (lambda ()
-            (unless (string-match "question" oddmuse-post)
-              (when (string-match "EmacsWiki" oddmuse-wiki)
-                (setq oddmuse-post (concat "uihnscuskc=1;" oddmuse-post)))
-              (when (string-match "OddmuseWiki" oddmuse-wiki)
-                (setq oddmuse-post (concat "ham=1;" oddmuse-post))))))
-
 (eval-after-load "icicles-opt.el"
   (add-hook 'icicle-mode-hook
             (lambda ()
@@ -156,10 +171,6 @@
                               (unless (string= "icicle-occur" (nth 1 lst)) lst))
                             icicle-top-level-key-bindings))
               (setq icicle-top-level-key-bindings my-icicle-top-level-key-bindings) )))
-
-
-(add-hook 'help-mode-hook 'view-mode)
-(add-hook 'grep-mode-hook 'view-mode)
 
 ;;; Define keymap inside defvar to make it easier to load changes.
 ;;; Some redundant "less"-like key bindings below have been commented out.

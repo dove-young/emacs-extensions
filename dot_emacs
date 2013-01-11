@@ -1,21 +1,11 @@
-
-
-
-
 ;;;;;;;;;;;;;;;;;;; Load emacs initial files in emacs-init directory ;;;;;;;;;;
 
-;(add-to-list 'load-path "/home/dove/emacs.el" "~/emacs.init")
 (add-to-list 'load-path "/home/dove/.emacs.d")
-;(add-to-list 'load-path "/home/dove/.emacs.d")
 (add-to-list 'load-path "/home/dove/.emacs.d/el-get/el-get")
-;(add-to-list 'load-path "/home/dove/.emacs.d/el-get/orgmode/contrib/lisp")
-
 ;(mapc 'load (directory-files "/home/dove/.emacs.d" t "^[a-zA-Z0-9].*.el$"))
 
 (load "~/.emacs.d/calendar-setup.el")
 (load "~/.emacs.d/dove-ext.el")
-;(color-theme-initialize)
-;(color-theme-sitaramv-solaris)
 (load "~/.emacs.d/my-color-theme.el")
 (load "~/.emacs.d/el-get-settings.el")
 (load "~/.emacs.d/plugins.el")
@@ -54,43 +44,3 @@
  '(org-level-1 ((t (:foreground "Aquamarine" :weight bold :height 1.44))))
  '(org-level-2 ((t (:foreground "Cyan" :weight bold :height 1.3))))
  '(org-level-3 ((t (:foreground "Salmon" :weight medium :height 1.2)))))
-
-
-;(set-default-font "Liberation Mono-12.5")
-
-;(server-start)
-;(message "Server Name: %s" server-name)
-
-;(set-frame-size (window-frame (get-buffer-window )) 154 40)
-
-(add-hook 'after-make-frame-functions
-          (lambda(arg)
-            (if  (>= (length (frame-list)) 1)
-                (progn 
-                  (set-fontset-font  "fontset-startup" 'chinese-gbk 
-                                     (font-spec :family "文泉驿等宽微米黑" :size 16) nil 'prepend)
-                  (set-fontset-font  "fontset-startup" 'unicode-bmp 
-                                     (font-spec :family "Source Code Pro" :size 16) nil 'prepend)
-                  )))
-          t)
-
-    (when (fboundp 'windmove-default-keybindings)
-      (windmove-default-keybindings))
-
-;          (set-fontset-font  "fontset-startup" 'chinese-gbk (font-spec :family "文泉驿微米黑" :size 18) nil 'prepend)
-;          (set-fontset-font  "fontset-startup" 'unicode (font-spec :family "Liberation Mono" :size 16) nil 'prepend)
-;          (set-fontset-font  "fontset-startup" 'iso-8859-1 (font-spec :family "Liberation Mono" :size 16) nil 'prepend)
-
-(font-family-list)
-
-;;; This was installed by package-install.el.
-;;; This provides support for the package system and
-;;; interfacing with ELPA, the package archive.
-;;; Move this code earlier if you want to reference
-;;; packages in your .emacs.
-;(when
-;    (load
-;     (expand-file-name "~/.emacs.d/elpa/package.el"))
-;  (package-initialize))
-
-;(server-start)
