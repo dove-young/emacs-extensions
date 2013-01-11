@@ -44,8 +44,7 @@
   "copy thing between beg & end into kill ring"
       (let ((beg (get-point begin-of-thing 1))
 	    (end (get-point end-of-thing arg)))
-	(copy-region-as-kill beg end))
-)
+	(copy-region-as-kill beg end)))
 
 (defun paste-to-mark(condition &optional arg)
   "Paste things to mark, or to the prompt in shell-mode"
@@ -63,8 +62,7 @@
 (defun test-get-point (&optional arg)
   "test-get-point"
   (interactive "P")
-  (message "%s" (get-point 'forward-word 3))
-)
+  (message "%s" (get-point 'forward-word 3)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -77,18 +75,7 @@
 (defun come-here (&optional arg)
   "Bring content from specific buffer to current buffer"
   (interactive (list (let (( arg (read-buffer "Input buffer Name: " "*Shell Command Output*") ))
-            (insert-buffer-substring (get-buffer arg))  ))
-  )
-)
-
-
-(defun ccc (&optional some)
-  "try interactive"
-  (interactive (list (let ((some (read-string "Input a string: " nil) ))
-             (message "%S" "erwerw") )
-        ) )
-)
-
+            (insert-buffer-substring (get-buffer arg))))))
 
 (defun jump (&optional arg)
   "Put current line to another window."
@@ -104,14 +91,8 @@
 		    (delete-region
 		     (or (marker-position comint-accum-marker)
 			 (process-mark (get-buffer-process (current-buffer))))
-		     (point))
-		    )
-		)
-	      (insert command)
-	      )
-       )
-)
-
+		     (point))))
+	      (insert command))))
 
 ;(defun beforeLast (&optional arg)
 ;  (interactive "P")
@@ -151,8 +132,7 @@
  (defun mywrite-region (&optional string)
    "Append current region to specified file. Leverage write-region to implement this function"
    (interactive "BInput file name: ")
-   (write-region (region-beginning) (region-end) string "append")
- )
+   (write-region (region-beginning) (region-end) string "append"))
 
 
 (defun matrixSum (start end)
@@ -160,11 +140,7 @@
   (interactive "r")
   (progn (shell-command-on-region start end "matrixSum")
 	 (let ((buf "*Shell Command Output*"))
-	   (progn (come-here buf) (kill-buffer buf) (delete-other-windows))
-	   )
-	   )
-)
-
+	   (progn (come-here buf) (kill-buffer buf) (delete-other-windows)))))
 
 (defun exitshell(&optional arg)
   " Exit from login shell, with prefix to exit many levels "
@@ -175,11 +151,7 @@
       (insert "exit ")
       (comint-send-input)
       (sit-for 1)
-      (pop nlist)
-      )
-    )
-)
-
+      (pop nlist))))
 
 ; The function will ignore command like this
 ; ssh msg@tivx24.cn.ibm.com ls bin
@@ -191,8 +163,7 @@
 	    (setq shell-buffer-name-list (list "*shell*") )
 	    (message "%s" shell-buffer-name-list)
 	    )
-	  t
-)
+	  t)
 
 (eval-after-load 'shell
   '(progn
@@ -289,10 +260,6 @@
  (interactive "P")
  (copy-something-to-mark 'beginning-of-line 'end-of-line arg))
 
-; (progn 
-;   (copy-thing 'beginning-of-line 'end-of-line arg) 
-;   (paste-to-mark (quote dove-paste-condition) arg)))
-
 
 (defun copy-word (&optional arg)
  "Copy words at point and paste them to mark"
@@ -381,8 +348,7 @@ and set the dove-parenthesis-begin found there"
                  (progn
                    (goto-char (+ (point) 1))
                    (setq dove-parenthesis-begin (string (char-before (point))))
-                   ))
-)
+                   )))
 (defun end-of-parenthesis(&optional arg)
   "Go to the end of parenthesis.
 Parenthesis character was defined by beginning-of-parenthesis"
@@ -396,46 +362,39 @@ Parenthesis character was defined by beginning-of-parenthesis"
   (re-search-forward dove-parenthesis-end
                      (line-end-position) 3 arg)
 	     (if (looking-back dove-parenthesis-end)
-                 (goto-char (- (point) 1)) )
-)
+                 (goto-char (- (point) 1))))
 
 (defun backward-symbol (&optional arg)
   (interactive "P")
   "Go backward a symbol, just like forward-symbol, by provide a -1 arg to it"
    (if arg  (forward-symbol arg) (forward-symbol -1))
-   (message "%s" arg)
-)
+   (message "%s" arg))
 
 (defun move-forward-paren (&optional arg)
 
   (interactive "sInput a Parenthesis:")
   (message "%s" arg)
-  (re-search-forward arg (point-max) 3 1)
-)
+  (re-search-forward arg (point-max) 3 1))
 
 (defun move-backward-paren (&optional arg)
 
   (interactive "sInput a Parenthesis:")
   (message "%s" arg)
-  (re-search-backward arg (point-max) 3 1)
-)
+  (re-search-backward arg (point-max) 3 1))
 
 (defun move-to-the-word (&optional arg)
  "Moving to next occurrance of current word"
  (interactive "P")
  (let (( cur-word (current-word nil nil) ))
    (message "%s" cur-word)
-   (search-forward cur-word))
-)
+   (search-forward cur-word)))
 
 (defun back-to-the-word (&optional arg)
  "Moving to next occurrance of current word"
  (interactive "P")
  (let (( cur-word (current-word nil nil) ))
    (message "%s" cur-word)
-   (search-backward cur-word))
-)
-
+   (search-backward cur-word)))
 
 (defun convert-Table(start end)
 "Convert Emacs table into HTML table"
@@ -447,9 +406,7 @@ Parenthesis character was defined by beginning-of-parenthesis"
 	 (insert "<table border=\"1\" cellspacing=\"0\" cellpadding=\"0\">\n")
 ;	 (end-of-buffer)
 	 (goto-char (point-max))
-	 (insert "</table>\n")
-)
-
+	 (insert "</table>\n"))
 
 (defun insert-line-number(&optional arg)
   "Insert a numeric sequence at beginning of each line"
@@ -503,10 +460,7 @@ Parenthesis character was defined by beginning-of-parenthesis"
      (progn (split-window-vertically)
 	    (split-window-horizontally)
 	    (other-window 2)
-	    (split-window-horizontally)
-	    )
-   )
-)
+	    (split-window-horizontally))))
 
 
 ;  +----------------------+                +---------- +----------+
@@ -688,13 +642,13 @@ Parenthesis character was defined by beginning-of-parenthesis"
 ;  |            |           |                    |            |           | 
 ;  +----------- +-----------+                    +----------- +-----------+ 
 ;
-;  +------------------------+                     +------------------------+ 
-;  |           A            |           \         |           B            | 
-;  |                        |   +-------+\        |                        | 
-;  +------------------------+   +-------+/        +------------------------+ 
-;  |     B     |     C      |           /         |     C     |     A      | 
-;  |           |            |                     |           |            | 
-;  +------------------------+                     +------------------------+ 
+;  +------------------------+                    +------------------------+ 
+;  |           A            |           \        |           B            | 
+;  |                        |   +-------+\       |                        | 
+;  +------------------------+   +-------+/       +------------------------+ 
+;  |     B     |     C      |           /        |     C     |     A      | 
+;  |           |            |                    |           |            | 
+;  +------------------------+                    +------------------------+ 
 
 
 (defmacro dove-roll-buffers (sort_fn)
@@ -775,10 +729,8 @@ Parenthesis character was defined by beginning-of-parenthesis"
 	     )
     (progn (overwrite-mode 0)
 	   (if (memq my-overwrite-mode-line mode-line-format)
-               (setq mode-line-format (delq my-overwrite-mode-line mode-line-format)))
-	   )
-    )
-)
+               (setq mode-line-format (delq my-overwrite-mode-line mode-line-format))) )))
+	  
 
 
 ; auto-type
@@ -791,8 +743,7 @@ Parenthesis character was defined by beginning-of-parenthesis"
   (goto-char beg)
   (forward-line -1)
   (newline)
-  (insert str1)
-)
+  (insert str1))
 
 (defun i-babel-quote-str (beg end Str)
   ""
@@ -800,8 +751,7 @@ Parenthesis character was defined by beginning-of-parenthesis"
     (insert Str)
     (goto-char beg)
     (insert Str)
-    (goto-char (+ end 2))
-)
+    (goto-char (+ end 2)))
 
 (defun iexp (St Ed)
   "Enclose example for org-mode"
@@ -941,10 +891,7 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
 		    (list
 		     (list (kbd "C-c C-t") 'hide-body)
 		     (list (kbd "C-c C-a") 'show-all)
-		     (list (kbd "C-c C-e") 'show-entry)))
-)
-
-
+		     (list (kbd "C-c C-e") 'show-entry))))
 
 (defun hs-hide-all-comments ()
   "Find all comments in the file and hide them via hs-hide-comment-region"
@@ -961,18 +908,14 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
 	(setq end (line-end-position)))
       (if (> count 1)
 	  (hs-hide-comment-region beg end))
-      (forward-line count)
-      )
-    )
-)
+      (forward-line count))))
 
 (defun goto-symbol (arg &optional flag)
   "find the next function definition"
   (interactive)
   (if (or flag nil)
       (re-search-backward (eval arg) )
-    (re-search-forward (eval arg) ))
-  )
+    (re-search-forward (eval arg) )))
 
 (defun find-file-and-goto-line (file-name &optional arg)
   "find a file and goto specific line"
