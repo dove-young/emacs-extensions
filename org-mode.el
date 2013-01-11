@@ -6,24 +6,41 @@
 ;(setq org-agenda-files (list "~/org/work.org" "~/org/home.org"))
 ;(add-hook 'org-mode-hook 'turn-on-font-lock) 
 (org-remember-insinuate)
-(setq org-directory "~/org")
-(setq org-default-notes-file (concat org-directory "/notes.org"))
+
+(setq org-directory                                      "~/org"
+      org-default-notes-file                             (concat org-directory "/notes.org")
+      org-use-fast-todo-selection                        t
+      org-agenda-tags-column                             -100
+      org-tags-column                                    -100
+)
+
 (define-key global-map "\C-cr" 'org-remember)
-(setq org-use-fast-todo-selection t)
-(setq org-agenda-tags-column -100)
-(setq org-tags-column -100)
+
 ;(setq org-indent-mode nil)
 ;(setq system-time-locale "C")
 ;(setq org-return-follows-link t)
-;(require 'org-babel-init)
+
+;; active Babel languages
+
+(setq dove-babel-lang-list
+      '("awk" "R" "ruby" "perl" "python" "gnuplot" "dot" "sh"))
+
+(org-babel-do-load-languages 
+ 'org-babel-load-languages
+ (mapcar (lambda (lang)
+           (cons (make-symbol lang) t))
+         dove-babel-lang-list))
+
+(setq org-confirm-babel-evaluate
+      (lambda (lang body)
+        (let ((value t))
+          (dolist (elt dove-babel-lang-list value)
+            (if (string= (downcase lang) (downcase elt))
+                (setq value nil))))))
 
 (require 'org-latex)
 (unless (boundp 'org-export-latex-classes)
   (setq org-export-latex-classes nil))
-; (add-to-list 'org-export-latex-classes
-;              '("article"
-;                "\\documentclass{article}"
-;                ("\\section{%s}" . "\\section*{%s}")))
 
 (add-to-list 'org-export-latex-classes
              '("article"
