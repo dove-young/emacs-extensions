@@ -429,13 +429,8 @@
 ;	    (color-theme-sitaramv-solaris)) t)
 	    (my-color-theme)) t)
 
-(my-color-theme)
-
-(defun reader_color_theme ()
-  (interactive)
-  (color-theme-gnome2)
-;  (my-color-theme)
-)
+;(add-to-list 'load-path "/home/dove/.emacs.d/custom-themes")
+;(require 'color-theme-solarized)
 
 ;(if window-system
 ;    (progn
