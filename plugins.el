@@ -14,6 +14,7 @@
 (require 'helm-config)
 (require 'auto-complete-config)
 (require 'magit)
+(require 'em-smart)
 
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/auto-complete-1.3.1/dict")
 (ac-config-default)

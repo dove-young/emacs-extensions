@@ -44,72 +44,12 @@
     org-mode
     tabbar-ruler
     yaml-mode
-;     (:name dired%2b 
-;            :type emacswiki
-;            :load ("dired%2b.el"))
-;; ;    dired%2b    ; icicles depends on this package
-;; ;    nxhtml
-;; ;    ecb
-     hide-region
-;;     magit
-;;     tabbar
-     psvn
+    hide-region
+    psvn
 ;;     rinari
-
-;     switch-window
-;;     yasnippet
-;;     (:name menu-bar+
-;;            :type emacswiki
-;;            :features menu-bar+)
-;;     (:name dired-sort-menu
-;;            :type emacswiki
-;; n           :features dired-sort-menu)
-;; ;    dired-sort-menu+
-;;     (:name dired-sort
-;;            :type emacswiki
-;;            :features dired-sort)
-;;     (:name session
-;;            :post-init (lambda () (add-hook 'after-init-hook 'session-initialize)))
-;;  ;   (:name emacs-w3m
-;;  ;          :type emacswiki
-;;  ;          :features w3m-load
-;;  ;          :after mime-w3m)
-;; ;    (:name rfc
-;; ;           :type emacswiki
-;; ;           :build ("sed -i -e 's/ (require.*w3)/;&/' rfc.el")
-;; ;           :features rfc
-;; ;           :load ("../../rfcview.el")
-;; ;           :after (lambda () 
-;; ;                    (setq rfc-url-save-directory "~/rfc")
-;; ;                    (setq rfc-index-url "http://www.ietf.org/rfc/rfc-index.txt")
-;; ;                    (setq rfc-archive-alist (list (concat rfc-url-save-directory "/rfc.zip")
-;; ;                                                  rfc-url-save-directory
-;; ;                                                  "http://www.ietf.org/rfc/"))
-;; ;                    (setq rfc-insert-content-url-hook '(rfc-url-save))
-;; ;                    (add-hook 'rfc-index-mode-hook 'rfcview-mode)))
-;; ;
-     (:name move-text
-            :type emacswiki
-            :features move-text)
- 
-;;    (:name orgmode
-;;           :type http-tar
-;;           :url "file:///home/dove/.emacs.d/org-7.9.2.tar.gz"
-;;           :options ("-xzf")
-;;           :info "./org-7.9.2/doc"
-;;           :build ("cd ./org-7.9.2; make")
-;;           :load-path ("./org-7.9.2/lisp")
-;;           :features org-install)
-;; 
-;; ;    (:name haskell-mode
-;; ;         :type http-tar
-;; ;         :options ("xzf")
-;; ;         :url "file:///home/dove/.emacs.d/haskell-mode-2.8.0.tar.gz"
-;; ;;         :url "http://projects.haskell.org/haskellmode-emacs/haskell-mode-2.8.0.tar.gz"
-;; ;         :load "haskell-site-file.el"
-;; ;         :after (lambda ()
-;; ;                  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-;; ;                  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
+    (:name move-text
+           :type emacswiki
+           :features move-text)
 ;;     (:name oddmuse                  ; the mode used to edit Emacswiki pages
 ;;            :type emacswiki
 ;;            :features oddmuse
@@ -131,14 +71,6 @@
            :features icicles
            :after (lambda() (icy-mode))
            )
-;      (:name hexrgb
-;             :type emacswiki
-;             :features hexrgb)
-;     (:name sunrise-commander-github
-;            :type git
-;            :url "git://github.com/escherdragon/sunrise-commander.git"
-;            :features sunrise-commander
-;            )
 
      (:name puppet-mode
             :type git 
@@ -151,14 +83,7 @@
            :features flymake-puppet
            :after (add-hook 'puppet-mode-hook (lambda () (flymake-puppet-load)))
            )
-;; ;    (:name cedet
-;; ;           :type bzr
-;; ;           :url "bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk"
-;; ;           :build ("make")
-;; ;           :features cedet
-;; ;           :load-path ("./common" "./semantic")
-;; ;           :post-init (lambda () (global-ede-mode 1))
-;; ;           )
+
 ))
 
 (el-get)
