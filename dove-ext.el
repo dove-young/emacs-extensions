@@ -26,15 +26,6 @@
 
 ;; miscellaneous
 
-;; 2010-08-04 improved rename-buffer-in-ssh-login function
-;; 2010-08-08 rewrote function rename-buffer-in-ssh-login
-;; 2010-08-08 added function rename-buffer-in-ssh-exit
-;; 2010-08-21 added my-overwrite, updated jump function
-;; 2010-09-18 added very fancy function split-v-3 and split-h-3
-;; 2010-09-27 added roll-v-3
-;; 2010-10-01 Rewrote some functions in more Lisp like style
-;; 2010-10-09 Rewrote those functions related to copy without selection
-;; 2012-01-22 Multiple modify and enhancement
 
 (defun get-point (symbol &optional arg)
  "get the point"
@@ -918,7 +909,11 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
     (re-search-forward (eval arg) )))
 
 (defun find-file-and-goto-line (file-name &optional arg)
-  "find a file and goto specific line"
+  "find a file and goto specific line
+
+(find-file-and-goto-line \"/home/dove/org/rubykoans/koans/about_hashes.rb:8\")
+will open about_hashes.rb and goto line 8
+"
   (interactive)
   (let* ((lst (split-string file-name "[:]" t))
          (f (car lst))

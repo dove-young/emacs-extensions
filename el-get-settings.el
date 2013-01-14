@@ -50,13 +50,13 @@
     (:name move-text
            :type emacswiki
            :features move-text)
-;;     (:name oddmuse                  ; the mode used to edit Emacswiki pages
-;;            :type emacswiki
-;;            :features oddmuse
-;;            :after (lambda () 
-;;                     (setq oddmuse-username "DavidYoung")
-;;                     (setq oddmuse-wiki "EmacsWiki")))
-;; 
+    (:name oddmuse                  ; the mode used to edit Emacswiki pages
+           :type emacswiki
+           :features oddmuse
+           :after (lambda () 
+                    (setq oddmuse-username "DavidYoung")
+                    (setq oddmuse-wiki "EmacsWiki")))
+
      (:name Emacs-PDE
             :type http-tar
             :url "file:///home/dove/.emacs.d/Emacs-PDE-0.2.16.tar.gz"

@@ -78,6 +78,7 @@
       eshell-where-to-jump                               'begin
       eshell-review-quick-commands                       nil
       eshell-smart-space-goes-to-end                     t
+      tramp-default-method                               "ssh"
 
 )
 
