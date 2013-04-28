@@ -41,15 +41,20 @@
   "Paste things to mark, or to the prompt in shell-mode"
   (let ((pasteMe 
 	 (lambda()
-	   (if (funcall condition)
-	     (progn (comint-next-prompt 25535) (yank))
-	   (progn (goto-char (mark)) (yank) )))))
-	(if arg
-	    (if (= arg 1)
-		nil
-	      (funcall pasteMe))
-	  (funcall pasteMe) )))
-	      
+	   (if (> (length (funcall condition)) 0 )
+               (progn (comint-next-prompt 25535) (yank)
+                      (message "%s" "1111")
+                      )
+
+             (progn (goto-char (mark)) (yank) 
+                    (message "%s" "234")
+                    )))))
+    (if arg
+        (if (= arg 1)
+            nil
+          (funcall pasteMe))
+      (funcall pasteMe) )))
+
 (defun test-get-point (&optional arg)
   "test-get-point"
   (interactive "P")
@@ -229,13 +234,13 @@
 )
 
 (setq dove-auto-paste-mode-list
-      '( "shell-mode" "eshell-mode"))
+      '(shell-mode eshell-mode))
 
 (defun dove-paste-condition (&optional arg)
   "Return t if major-mode match predefined list"
-  (mapcan (lambda (x)
-            (string= x major-mode))
-  dove-auto-paste-mode-list))
+  (message "%s %s"  major-mode dove-auto-paste-mode-list)
+  (message "%s"  (member major-mode  dove-auto-paste-mode-list))
+  (member major-mode dove-auto-paste-mode-list))
 
 (defmacro copy-something-to-mark (begin-fn end-fn arg)
   `(progn (copy-thing  ,begin-fn ,end-fn ,arg)
@@ -251,7 +256,6 @@
  (interactive "P")
  (copy-something-to-mark 'beginning-of-line 'end-of-line arg))
 
-
 (defun copy-word (&optional arg)
  "Copy words at point and paste them to mark"
   (interactive "P")
@@ -265,9 +269,11 @@
 (defun thing-copy-string-to-mark(&optional arg)
   "Copy string at point or region selected and paste them to mark"
   (interactive "P")
+
   (if (and mark-active transient-mark-mode)
-      (progn (copy-region-as-kill (mark) (point))
-             (pop-mark))
+      (progn
+        (copy-region-as-kill (mark) (point))
+        (pop-mark))
     (copy-thing 'beginning-of-string 'end-of-string arg))
   (paste-to-mark 'dove-paste-condition arg))
 
@@ -931,5 +937,20 @@ will open about_hashes.rb and goto line 8
   (interactive "P")
   (shell-command (concat "sdcv " (current-word nil nil))))
 
+(defun delete-window-next ()
+  "Delete window next to this one"
+  (interactive)
+  (other-window 1)
+  (delete-window))
+
+(defun toggle-goagent ()
+  "Toggle GoAgent for W3M"
+  (interactive "P")
+  (if (or w3m-command-arguments nil)
+      (setq w3m-command-arguments
+                   '("-o" "http_proxy=http://127.0.0.1:8087/"))
+  (setq w3m-command-arguments nil)))
+
 (provide 'dove-ext)
+
 
