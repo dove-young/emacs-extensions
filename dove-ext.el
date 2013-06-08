@@ -31,29 +31,6 @@
  "get the point"
      (progn (funcall symbol arg) (point)))
 
-(defun copy-thing (begin-of-thing end-of-thing &optional arg)
-  "copy thing between beg & end into kill ring"
-      (let ((beg (get-point begin-of-thing 1))
-	    (end (get-point end-of-thing arg)))
-	(copy-region-as-kill beg end)))
-
-(defun paste-to-mark(condition &optional arg)
-  "Paste things to mark, or to the prompt in shell-mode"
-  (let ((pasteMe 
-	 (lambda()
-	   (if (> (length (funcall condition)) 0 )
-               (progn (comint-next-prompt 25535) (yank)
-                      (message "%s" "1111")
-                      )
-
-             (progn (goto-char (mark)) (yank) 
-                    (message "%s" "234")
-                    )))))
-    (if arg
-        (if (= arg 1)
-            nil
-          (funcall pasteMe))
-      (funcall pasteMe) )))
 
 (defun test-get-point (&optional arg)
   "test-get-point"
@@ -89,18 +66,6 @@
 			 (process-mark (get-buffer-process (current-buffer))))
 		     (point))))
 	      (insert command))))
-
-;(defun beforeLast (&optional arg)
-;  (interactive "P")
-;  (let ((num (or arg 1)))
-;    (comint-previous-prompt num)
-;    )
-;  (let ((input (funcall comint-get-old-input))
-;	      (goto-char (process-mark process))
-;
-;	      (insert input))))
-;
-;
 
 ;(defun some (&optional arg)
 ;  "Delete Shell command output, to which C-c C-o cannot do for you."
@@ -218,6 +183,33 @@
 
 ))
 
+(defvar dove-prompt-line 1)
+
+(defun shell-args (&optional cmd)
+  "echo #4:3 some #2:3 new "
+  (interactive)
+  (comint-kill-input)
+  (let ((cmd_list (split-string (pop kill-ring)))
+        (dove_zsh_cmd (list " "))
+        (process (get-buffer-process (current-buffer)))) 
+    (while (> (length cmd_list) 0)
+      (let ((word (pop cmd_list)))
+        (if (string-match "^#[0-9]:[0-9]$" word)
+            (progn (let ((row  (string-to-int(substring word 1)))
+                         (col  (string-to-int(substring word 3))))
+                     (save-excursion
+                       (forward-line (- -1 (+ row dove-prompt-line)))  ; so starts at -1 instead of 0
+                       (let ((thing-list (split-string (thing-at-point 'line))))
+                         (let ((dest_str (nth (+ 0 col) thing-list)))  ; so starts at 0 instead of 1
+                           (setq dove_zsh_cmd (append dove_zsh_cmd (list dest_str " "))))
+                     ))))
+          (setq dove_zsh_cmd (append dove_zsh_cmd (list word " ")))
+          )))
+    (pop dove_zsh_cmd) ; pop the prefix blank charactor
+    (goto-char (process-mark process))
+    (apply #'insert dove_zsh_cmd)
+    ))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                                 ;;
 ;;             copy & paste related                ;;
@@ -238,10 +230,26 @@
 
 (defun dove-paste-condition (&optional arg)
   "Return t if major-mode match predefined list"
-  (message "%s %s"  major-mode dove-auto-paste-mode-list)
-  (message "%s"  (member major-mode  dove-auto-paste-mode-list))
   (member major-mode dove-auto-paste-mode-list))
 
+(defun copy-thing (begin-of-thing end-of-thing &optional arg)
+  "copy thing between beg & end into kill ring"
+      (let ((beg (get-point begin-of-thing 1))
+	    (end (get-point end-of-thing arg)))
+	(copy-region-as-kill beg end)))
+
+(defun paste-to-mark(condition &optional arg)
+  "Paste things to mark, or to the prompt in shell-mode"
+  (let ((paste 
+	 (lambda()
+	   (if (> (length (funcall condition)) 0 )
+                (progn (comint-next-prompt 25535) (yank))
+             (progn (goto-char (mark)) (yank))))))
+
+    (if (and arg (= arg 1))
+        nil
+      (funcall paste))))
+        
 (defmacro copy-something-to-mark (begin-fn end-fn arg)
   `(progn (copy-thing  ,begin-fn ,end-fn ,arg)
           (paste-to-mark 'dove-paste-condition ,arg)))
@@ -914,16 +922,21 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
       (re-search-backward (eval arg) )
     (re-search-forward (eval arg) )))
 
-(defun find-file-and-goto-line (file-name &optional arg)
+(defun find-file-and-goto-line (&optional arg)
   "find a file and goto specific line
 
-(find-file-and-goto-line \"/home/dove/org/rubykoans/koans/about_hashes.rb:8\")
+\(find-file-and-goto-line \"/home/dove/org/rubykoans/koans/about_hashes.rb:8\"\)
 will open about_hashes.rb and goto line 8
 "
   (interactive)
-  (let* ((lst (split-string file-name "[:]" t))
-         (f (car lst))
-         (l (string-to-int (car (last lst)))))
+  (let* ((file-name (buffer-substring-no-properties
+                     (beginning-of-string)
+                     (end-of-string)))
+         (lst (split-string file-name ":" t))
+;  (let* ((lst (split-string file-name "[:]" t))
+         (f (pop lst))
+         (l (string-to-int (pop lst))))
+    (message "file is %s line is %d" f l )
     (if (file-exists-p f)
         (progn
           (find-file f)
