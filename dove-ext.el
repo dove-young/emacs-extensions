@@ -186,7 +186,7 @@
 (defvar dove-prompt-line 1)
 
 (defun shell-args (&optional cmd)
-  "echo #4:3 some #2:3 new "
+  "echo #4:3 some #2:3 new ;  svn diff #2:1:s/win/linux/"
   (interactive)
   (comint-kill-input)
   (let ((cmd_list (split-string (pop kill-ring)))
@@ -194,17 +194,26 @@
         (process (get-buffer-process (current-buffer)))) 
     (while (> (length cmd_list) 0)
       (let ((word (pop cmd_list)))
-        (if (string-match "^#[0-9]:[0-9]$" word)
+        (if (string-match "^#[0-9]:[0-9]" word)
             (progn (let ((row  (string-to-int(substring word 1)))
                          (col  (string-to-int(substring word 3))))
                      (save-excursion
                        (forward-line (- -1 (+ row dove-prompt-line)))  ; so starts at -1 instead of 0
                        (let ((thing-list (split-string (thing-at-point 'line))))
                          (let ((dest_str (nth (+ 0 col) thing-list)))  ; so starts at 0 instead of 1
+;                           (message "word -->%s<--" word)
+;                           (message "dove_zsh_cmd => %s" dove_zsh_cmd)
+                           (if (string-match "#[0-9]:[0-9]:s/\\([a-z]+\\)/\\([a-z]+\\)/" word)
+                               (progn (let ((regex (match-string 1 word))
+                                            (dest (match-string 2 word)))
+;                                        (message "regex => %s  dest => %s " regex dest)
+                                        (setq dest_str (replace-regexp-in-string regex dest dest_str))
+                                        )))
                            (setq dove_zsh_cmd (append dove_zsh_cmd (list dest_str " "))))
-                     ))))
-          (setq dove_zsh_cmd (append dove_zsh_cmd (list word " ")))
-          )))
+                         ))))
+          (setq dove_zsh_cmd (append dove_zsh_cmd (list word " "))))
+        ))
+    (message "dove_zsh_cmd ==> %s" dove_zsh_cmd)
     (pop dove_zsh_cmd) ; pop the prefix blank charactor
     (goto-char (process-mark process))
     (apply #'insert dove_zsh_cmd)
