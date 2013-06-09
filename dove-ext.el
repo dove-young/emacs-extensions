@@ -926,7 +926,7 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
 (defun find-file-and-goto-line (&optional arg)
   "find a file and goto specific line
 
-\(find-file-and-goto-line \"/home/dove/org/rubykoans/koans/about_hashes.rb:8\"\)
+(find-file-and-goto-line \"/home/dove/org/rubykoans/koans/about_hashes.rb:8\")
 will open about_hashes.rb and goto line 8
 "
   (interactive)

@@ -67,8 +67,8 @@
 	 `( ,(kbd "M-}") move-forward-paren)
 	 `( ,(kbd "M-{") move-backward-paren)
 	 ;; commands
-	 `( ,(kbd "C-c z") eshell)
-;	 `( ,(kbd "C-c z") shell)
+;	 `( ,(kbd "C-c z") eshell)
+	 `( ,(kbd "C-c z") shell)
 	 `( ,(kbd "C-c j") jump)
 
 	 `( ,(kbd "C-x 4 4") split-window-4)
@@ -150,7 +150,16 @@
      (define-key ,mode-map "o" (lambda nil (interactive) (scroll-down (/ (window-height) 2))))
      (define-key ,mode-map "e" (lambda nil (interactive) (scroll-up (/ (window-height) 2))))
      (define-key ,mode-map "k" (lambda nil (interactive) (previous-line)))
-     (define-key ,mode-map "j" (lambda nil (interactive) (next-line )))))
+     (define-key ,mode-map "j" (lambda nil (interactive) (next-line )))
+     (define-key ,mode-map "+" (lambda nil (interactive) (show-entry)))
+     (define-key ,mode-map "-" (lambda nil (interactive) (hide-entry)))
+     (define-key ,mode-map "N" (lambda nil (interactive) (View-search-last-regexp-forward)))
+     (define-key ,mode-map "P" (lambda nil (interactive) (View-search-last-regexp-backward)))
+     (define-key ,mode-map "p" (lambda nil (interactive) (previous-line)))
+     (define-key ,mode-map "n" (lambda nil (interactive) (next-line )))
+     (define-key ,mode-map ";" (lambda nil (interactive) (show-entry)))
+     (define-key ,mode-map "q" (lambda nil (interactive) (hide-entry)))
+))
 
 ; (macroexpand '(dove-easy-scroll Info-mode-map))
 
@@ -210,8 +219,10 @@
 (add-hook 'Man-mode-hook
           (lambda ()
             (view-mode)))
-(global-set-key (kbd "C-x C-f") `helm-find-files)
+;(global-set-key (kbd "C-x C-f") `helm-find-files)
 (add-hook 'vc-dir-mode-hook
           (lambda ()
             (define-key vc-dir-mode-map "d" 'vc-ediff)))
                               
+(global-set-key (kbd "C-c 0") 'delete-window-next)
+;(define-key ctl-x-5-map (kbd "C-x 5 0") 'delete-window-next)

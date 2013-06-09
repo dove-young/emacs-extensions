@@ -24,7 +24,8 @@
   (color-theme-install
    '(my-color-theme
 ;     ((background-color . "#102C29")
-     ((background-color . "#002942")
+;     ((background-color . "#002942")
+     ((background-color . "#001b35")
 ;     ((background-color . "darkslategrey")
 ;     (( background-color . "black")
       (background-mode . dark)

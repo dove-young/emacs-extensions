@@ -9,12 +9,15 @@
        "~/.emacs.d/auto-complete-1.3.1"
        "~/.emacs.d/magit"
        "~/.emacs.d/el-get/emacs-helm"
+       "~/.emacs.d"
        ))
 
-(require 'helm-config)
+;(require 'helm-config)
 (require 'auto-complete-config)
 (require 'magit)
 (require 'em-smart)
+(require 'gdb-ui)
+(require 'basic-edit-toolkit)
 
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/auto-complete-1.3.1/dict")
 (ac-config-default)
@@ -24,13 +27,15 @@
 
 (setq outline-minor-mode-list 
       (list '(emacs-lisp-mode "(defun\\|(defvar\\|(defcustom\\|(defconst\\|(defmacro")
-	    '(shell-mode "^dove@zsh.*[#%\$] ")
+	    '(shell-mode "^[0-9] \\+ [0-9]+:[0-9]+:[0-9]+ \\+ ")
 	    '(sh-mode "function .*[{(]")
 	    '(perl-mode "sub ")
 	    '(eshell-mode "^[^#$\n]* [#$] ")
             '(ruby-mode "[ ]+def \\|cloud_pattern\\|[ ]+cloud_node")
-
+            '(Man-mode "^\\([A-Z][A-Z0-9 /-]+\\)$")
+;            '(Man-mode "^[A-Z]+")
             ))
+
 
 (mapc (lambda (mode-name) 
         (add-hook mode-name  'set-outline-minor-mode-regexp t))
@@ -39,6 +44,7 @@
         emacs-lisp-mode-hook
         eshell-mode-hook
         ruby-mode-hook
+        Man-mode-hook
         ))
 
 
@@ -46,6 +52,11 @@
 (add-hook 'find-file-hook (lambda () (linum-mode 1)))
 (add-hook 'help-mode-hook 'view-mode)
 (add-hook 'grep-mode-hook 'view-mode)
+(add-hook 'eshell-mode-hook           'turn-on-eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook       'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook             'turn-on-eldoc-mode)
+
 (add-hook 'oddmuse-mode-hook
           (lambda ()
             (unless (string-match "question" oddmuse-post)
@@ -54,12 +65,17 @@
               (when (string-match "OddmuseWiki" oddmuse-wiki)
                 (setq oddmuse-post (concat "ham=1;" oddmuse-post))))))
 
-(eval-after-load 'shell
-  '(progn
-     (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-     (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
-     t))
+     (eval-after-load 'shell
+       '(progn
+          (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+          (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on t)
+          (define-key shell-mode-map "\t" 'completion-at-point)
+          (add-to-list 'comint-dynamic-complete-functions 'icicle-shell-dynamic-complete-filename)
+          (add-to-list 'comint-dynamic-complete-functions 'icicle-shell-dynamic-complete-command)
+;          (add-to-list 'comint-dynamic-complete-functions 'icicle-shell-dynamic-complete-as-command)
+          t))
 
+;(setq comint-dynamic-complete-functions nil)
 (add-hook 'dired-load-hook
           (lambda ()
             (load "dired-x")
@@ -70,14 +86,14 @@
             ;; (setq dired-x-hands-off-my-keys nil)
             ))
 
-(add-hook 'outline-mode-hook 
-          (lambda () 
-            (require 'outline-magic)))
-
-(add-hook 'outline-minor-mode-hook 
-          (lambda () 
-            (require 'outline-magic)
-            (define-key outline-minor-mode-map [(f2)] 'outline-cycle)))
+; (add-hook 'outline-mode-hook 
+;           (lambda () 
+;             (require 'outline-magic)))
+; 
+; (add-hook 'outline-minor-mode-hook 
+;           (lambda () 
+;             (require 'outline-magic)
+;             (define-key outline-minor-mode-map [(f2)] 'outline-cycle)))
 
 (add-hook 'after-make-frame-functions
           (lambda(arg)
@@ -106,7 +122,7 @@
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
 
-;(load "~/.emacs.d/mouse.el")
+(load "~/.emacs.d/mouse.el")
 
 ;;
 ;; Setup puppet-mode for autoloading
@@ -357,3 +373,14 @@ that was stored with ska-point-to-register."
           (set-mark (- (point) region-size))
           (setq mark-active t))
       (message "No more occurances of \"%s\" in buffer!" region-text))))
+
+
+(defun make-region-read-only (start end)
+  (interactive "*r")
+  (let ((inhibit-read-only t))
+    (put-text-property start end 'read-only t)))
+
+(defun make-region-read-write (start end)
+  (interactive "*r")
+  (let ((inhibit-read-only t))
+    (put-text-property start end 'read-only nil)))

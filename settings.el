@@ -13,8 +13,8 @@
 (display-time)
 ;(bbdb-initialize)
 (global-visual-line-mode 1)
-(tabbar-mode)
-(icy-mode 1)
+;(tabbar-mode)
+;(icy-mode 1)
 (read-abbrev-file "~/.abbrev_defs")
 (mouse-avoidance-mode 'jump)
 (auto-image-file-mode)
@@ -98,6 +98,25 @@
 	try-complete-lisp-symbol-partially
 	try-complete-lisp-symbol))
 
+;(setq hippie-expand-try-functions-list
+;          '(try-expand-line
+;            try-expand-dabbrev
+;            try-expand-line-all-buffers
+;            try-expand-list
+;            try-expand-list-all-buffers
+;            try-expand-dabbrev-visible
+;            try-expand-dabbrev-all-buffers
+;            try-expand-dabbrev-from-kill
+;            try-complete-file-name
+;            try-complete-file-name-partially
+;            try-complete-lisp-symbol
+;            try-complete-lisp-symbol-partially
+;            try-expand-whole-kill))
+;(autoload 'comint-dynamic-complete "comint" "Complete for file name" t)
+;(setq comint-completion-addsuffix '("/" . ""))
+;(setq-default indent-tabs-mode nil)
+
+
 (setenv "EMACSSHELL" shell-file-name)
 
 (eval-after-load 'speedbar
@@ -133,6 +152,17 @@
         0)
        " # " " $ "))))
 
+  (defadvice eldoc-current-symbol (around eldoc-current-symbol activate)
+    ad-do-it
+    (if (and (not ad-return-value)
+             (eq major-mode 'eshell-mode))
+        (save-excursion
+          (goto-char eshell-last-output-end)
+          (let ((esym (eshell-find-alias-function (current-word)))
+                (sym (intern-soft (current-word))))
+            (setq ad-return-value (or esym sum))))))
+
+
 (mapcar (lambda (setting)
           (setq auto-mode-alist (cons setting auto-mode-alist)))
 '(("\\.xml$"          . sgml-mode)
@@ -147,3 +177,24 @@
   ("[^/]\\.dired$"    . dired-virtual-mode)
   ("\\.yml$"          . yaml-mode)))
 
+
+
+;; Initialize Pymacs 
+
+;(autoload 'pymacs-apply "pymacs")
+;(autoload 'pymacs-call "pymacs")
+;(autoload 'pymacs-eval "pymacs" nil t)
+;(autoload 'pymacs-exec "pymacs" nil t)
+;(autoload 'pymacs-load "pymacs" nil t)
+;
+;;; Initialize Rope 
+;;(pymacs-load "ropemacs" "rope-")
+;(setq ropemacs-enable-autoimport t)
+;(autoload 'pymacs-autoload "pymacs")
+;(pymacs-load "rope")
+
+;(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "sbcl")
+
+; sbcl --load quicklisp.lisp
+; (ql:quickload "quicklisp-slime-helper")

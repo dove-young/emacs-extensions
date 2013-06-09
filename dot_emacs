@@ -25,6 +25,7 @@
  '(ecb-options-version "2.40")
  '(ede-project-directories (quote ("/home/dove/Shell/branch_dev/agent_team/common" "/home/dove/hslt-cli-1.1.0-105/hslt/zodiac.cn.ibm.com/hslt/iaas/iaasapis")))
  '(oddmuse-username "DavidYoung")
+ '(org-agenda-files (quote ("~/org/work.org")))
  '(org-babel-load-languages (quote ((emacs-lisp . t) (sh . t) (perl . t))))
  '(scalable-fonts-allowed t)
  '(session-use-package t)

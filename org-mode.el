@@ -1,9 +1,12 @@
-;(add-to-list 'load-path "/home/dove/.emacs.d/org-7.8.09/lisp")
+(add-to-list 'load-path "/home/dove/.emacs.d/org-7.9.3e/lisp")
 ;(require 'org-install)
-;(require 'org)
+
+(require 'org)
+;.emacs.d/org-7.9.3e
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
 (setq org-agenda-files (list "~/org/gtd.org" ))
-;(setq org-agenda-files (list "~/org/work.org" "~/org/home.org"))
+(setq org-agenda-files (list "~/org/work.org" "~/org/home.org"))
 ;(add-hook 'org-mode-hook 'turn-on-font-lock) 
 (org-remember-insinuate)
 
@@ -256,3 +259,4 @@ COORQM.KM6_QMCOOR_NAME=QMCOD INSTANCE=tivhpi03"
 )
 
 (define-abbrev shell-mode-abbrev-table "sshl" "" 'ssh-login)
+
