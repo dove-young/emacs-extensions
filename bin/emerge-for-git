@@ -1,0 +1,12 @@
+#!/bin/bash
+set -x
+
+file_A=$3
+file_B=$4
+file_out=${4}.out
+emacsclient -c  --eval "(emerge-files nil \"${file_A}\" \"${file_B}\" \"${file_out}\")"
+set +x
+#    $ git config --global merge.tool emerge
+#    $ git config --local merge.tool emerge
+#    $ git config --local mergetool.emerge.path $HOME/bin/emerge-for-git
+#    $ git config --global mergetool.emerge.path $HOME/bin/emerge-for-git
