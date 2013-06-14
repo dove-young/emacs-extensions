@@ -1,0 +1,5 @@
+#!/bin/bash
+set -x
+#echo $*
+exec emacsclient -c --eval "(ediff \"$1\" \"$2\")" &
+set +x

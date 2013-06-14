@@ -384,3 +384,20 @@ that was stored with ska-point-to-register."
   (interactive "*r")
   (let ((inhibit-read-only t))
     (put-text-property start end 'read-only nil)))
+
+    (add-hook 'ediff-startup-hook
+              (lambda () 
+                (progn
+                  (select-frame-by-name "Ediff")
+                  (set-frame-size(selected-frame) 40 10))))
+    
+
+; (message "%s" (get-buffer-window "*Ediff Control Panel*" t))
+; (setq ediff-startup-hook nil)
+;  (progn
+;                   (select-frame-by-name "Ediff")
+;                   (set-frame-size(selected-frame) 80 10))
+; 
+; (message "%s" (frame-list))
+; 
+; (message "%s" ())

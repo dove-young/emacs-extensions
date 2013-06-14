@@ -1,0 +1,11 @@
+#!/bin/bash
+set -x
+#echo $*
+if [ $# = 7 ]
+then
+    working_copy=$7
+    revision=$6
+fi
+
+exec emacsclient -c --eval "(ediff \"$working_copy\" \"$revision\")" &
+set +x
