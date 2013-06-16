@@ -195,8 +195,8 @@
     (while (> (length cmd_list) 0)
       (let ((word (pop cmd_list)))
         (if (string-match "^#[0-9]:[0-9]" word)
-            (let ((row  (string-to-int(substring word 1)))
-                  (col  (string-to-int(substring word 3))))
+            (let ((row  (string-to-number(substring word 1)))
+                  (col  (string-to-number(substring word 3))))
               (save-excursion
                 (forward-line (- -1 (+ row dove-prompt-line)))  ; so starts at -1 instead of 0
                 (let* ((thing-list (split-string (thing-at-point 'line)))
@@ -304,7 +304,8 @@ Automatic due with nesting {[(<\"''\">)]} characters"
      (forward-line -1)
      (if arg
 	 (if (> arg 1)
-	     (duplicate-line (- arg 1) -1)))))
+	     (duplicate-line (- arg 1))))))
+
 
 (defun dove-forward-kill-word (&optional arg)
   "Backward kill word, but do not insert it into kill-wring"
@@ -414,34 +415,43 @@ Parenthesis character was defined by beginning-of-parenthesis"
 	 (goto-char (point-max))
 	 (insert "</table>\n"))
 
-(defun insert-line-number(&optional arg)
-  "Insert a numeric sequence at beginning of each line"
-  (interactive "P")
-  (let ((insert-number 
-	 (lambda (start beg end)
-	   "insert a numeric sequence at beginning of each line"
-	   (goto-char beg)
-	   (beginning-of-line)
-	   (insert (number-to-string start))
-	   (setq start (+ start 1))
-	   (while (< (point) end)
-	     (beginning-of-line 2)
-	     (insert (number-to-string start))
-	     (setq start (+ start 1))))))
-    (cond 
-     ((or mark-active transient-mark-mode)
-      (if (> (point) (mark))
-	  (exchange-point-and-mark))
-      (if arg
-	  (funcall insert-number arg (point) (mark))
-	  (funcall insert-number 0 (point) (mark)))
-      )
-     (t
-      (if arg
-	  (funcall insert-number arg (point-min) (point-max))
-	(funcall insert-number 0 (point-min) (point-max)))
-      ))))
 
+; Conflict with an existing function
+; 
+; insert-line-number is an interactive Lisp function in `basic-edit-toolkit.el'.
+; 
+; (insert-line-number BEG END &optional START-LINE)
+; 
+; Insert line numbers into buffer.
+
+; (defun insert-line-number(&optional arg)
+;   "Insert a numeric sequence at beginning of each line"
+;   (interactive "P")
+;   (let ((insert-number 
+; 	 (lambda (start beg end)
+; 	   "insert a numeric sequence at beginning of each line"
+; 	   (goto-char beg)
+; 	   (beginning-of-line)
+; 	   (insert (number-to-string start))
+; 	   (setq start (+ start 1))
+; 	   (while (< (point) end)
+; 	     (beginning-of-line 2)
+; 	     (insert (number-to-string start))
+; 	     (setq start (+ start 1))))))
+;     (cond 
+;      ((or mark-active transient-mark-mode)
+;       (if (> (point) (mark))
+; 	  (exchange-point-and-mark))
+;       (if arg
+; 	  (funcall insert-number arg (point) (mark))
+; 	  (funcall insert-number 0 (point) (mark)))
+;       )
+;      (t
+;       (if arg
+; 	  (funcall insert-number arg (point-min) (point-max))
+; 	(funcall insert-number 0 (point-min) (point-max)))
+;       ))))
+; 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                                 ;;
@@ -529,16 +539,6 @@ Parenthesis character was defined by beginning-of-parenthesis"
 ;  |                       |                  |            |           | 
 ;  +-----------------------+                  +----------- +-----------+ 
 
-
-(defun change-split-type-2 (&optional arg)
-  "Changes splitting from vertical to horizontal and vice-versa"
-  (interactive "P")
-  (let ((split-type (lambda (&optional arg)
-                      (delete-other-windows-internal)
-                      (if arg (split-window-vertically)
-                        (split-window-horizontally)))))
-    (message "win-0 %s" (window-list))
-    (change-split-type split-type arg)))
 
 (defun change-split-type (split-fn &optional arg)
   "Change 3 window style from horizontal to vertical and vice-versa"
@@ -670,9 +670,9 @@ Parenthesis character was defined by beginning-of-parenthesis"
   "Roll 3 window buffers clockwise and anti-clockwise"
   (interactive "P")
   (if arg 
-      (dove-roll-buffers '(lambda (bufList)  ; put the last to the first
+      (dove-roll-buffers #'(lambda (bufList)  ; put the last to the first
                               (cons (car (last bufList)) (butlast bufList))))
-      (dove-roll-buffers '(lambda (bufList) ; put the first to the last
+      (dove-roll-buffers #'(lambda (bufList) ; put the first to the last
                             (append (cdr bufList) (list (car bufList)))))))
 
 ;; (defun roll-3-buffers-anti-clockwise ()
@@ -936,13 +936,13 @@ will open about_hashes.rb and goto line 8
          (lst (split-string file-name ":" t))
 ;  (let* ((lst (split-string file-name "[:]" t))
          (f (pop lst))
-         (l (string-to-int (pop lst))))
+         (l (string-to-number (pop lst))))
     (message "file is %s line is %d" f l )
     (if (file-exists-p f)
         (progn
           (find-file f)
           (if (numberp l)
-              (goto-line l))))))
+              (forward-line (1- l)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
