@@ -26,6 +26,8 @@
 
 ;; miscellaneous
 
+(eval-when-compile
+  (require 'cl))
 
 (defun get-point (symbol &optional arg)
  "get the point"
@@ -188,20 +190,21 @@
 (defun shell-args (&optional cmd)
   "echo #4:3 some #2:3 new ;  svn diff #2:1:s/win/linux/"
   (interactive)
+  (goto-char (line-end-position))
   (comint-kill-input)
   (let ((cmd_list (split-string (pop kill-ring)))
         (dove_zsh_cmd (list " "))
-        (process (get-buffer-process (current-buffer)))) 
+        (process (get-buffer-process (current-buffer))))
     (while (> (length cmd_list) 0)
       (let ((word (pop cmd_list)))
-        (if (string-match "^#[0-9]:[0-9]" word)
-            (let ((row  (string-to-number(substring word 1)))
-                  (col  (string-to-number(substring word 3))))
+        (if (string-match "^#\\([0-9]\\):\\([0-9]\\)" word)
+            (let ((row  (string-to-number(match-string 1 word)))
+                  (col  (string-to-number(match-string 2 word))))
               (save-excursion
                 (forward-line (- -1 (+ row dove-prompt-line)))  ; so starts at -1 instead of 0
                 (let* ((thing-list (split-string (thing-at-point 'line)))
                        (dest_str (nth (+ -1 col) thing-list)))  ; so starts at 1 instead of 0
-                    (if (string-match "#[0-9]:[0-9]:s/\\([a-z]+\\)/\\([a-z]+\\)/" word)
+                    (if (string-match ":s/\\([a-z]+\\)/\\([a-z]+\\)/" word)
                         (let ((regex (match-string 1 word))
                               (dest (match-string 2 word)))
                           (setq dest_str (replace-regexp-in-string regex dest dest_str))))
