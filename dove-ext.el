@@ -981,7 +981,7 @@ will open about_hashes.rb and goto line 8
 (defun dove-text-to-url (&optional arg)
   "Convert text to orgmode url"
   (interactive "P")
-  (let ((my-point nil))
+  (let ((my-point nil) (my-string nil))
     (if (and mark-active transient-mark-mode)
         (progn
           (copy-region-as-kill (mark) (point))
@@ -989,22 +989,21 @@ will open about_hashes.rb and goto line 8
       (progn
         (copy-region-as-kill (beginning-of-string "\\]") (end-of-string))
         (setq my-point (point))))
+    (setq my-string (car kill-ring))
+    (re-search-backward "\\[[0-9]+\\]" (line-beginning-position) 3 1)
+    (replace-match "[[file:")
+    (goto-char (+ 2 my-point))
+    (insert (concat ".org][" my-string "]]"))
 
-  (re-search-backward "\\[[0-9]+\\]") ;(line-beginning-position) 3 1)
-  (replace-match "[[file:")
-  (goto-char (+ 2 my-point))
-  (insert ".org][")
-  (yank))
-  (insert "]]")
-  (let ((url-str (read-from-minibuffer "Input URL: " nil nil nil)))
-    (message "%s" url-str)
-    (if (and (stringp url-str)  (string-match "^http" url-str))
-        (progn
-          (let ((buf (get-buffer-create " *pwd*")))
-            (call-process-shell-command "~/bin/msdn.filter.sh" nil buf 1 (format "'%s'" url-str))
-            (view-buffer-other-window buf)))))
-  
-)
+    (let ((url-str (read-from-minibuffer "Input URL: " nil nil nil))  ; read url here
+          (dir (file-name-directory (buffer-file-name))))
+      (if (and (stringp url-str)  (string-match "^http" url-str))
+          (progn
+            (let ((buf (get-buffer-create " *pwd*")))
+              (call-process-shell-command "~/bin/msdn.filter.sh" nil buf 1 (format "'%s'" url-str))
+              (view-buffer-other-window buf)
+              (write-file (format "%s%s.org" dir my-string) t)
+              ))))))
 
 (provide 'dove-ext)
 
