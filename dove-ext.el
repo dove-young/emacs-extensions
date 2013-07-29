@@ -28,6 +28,7 @@
 
 (eval-when-compile
   (require 'cl))
+(require 'cl)
 
 (defun get-point (symbol &optional arg)
  "get the point"
@@ -320,20 +321,20 @@ Automatic due with nesting {[(<\"''\">)]} characters"
 )
 
 
-(defun beginning-of-string(&optional arg)
+(defun* beginning-of-string(&optional (beg "[ \\t]"))
   "  "
-  (re-search-backward "[ \t]" (line-beginning-position) 3 1)
-	     (if (looking-at "[\t ]") 
-                 (goto-char (+ (point) 1)) 
-               (point))
-)
+  (re-search-backward beg (line-beginning-position) 3 1)
+  (if (looking-at beg)
+      (goto-char (+ (point) 1)) 
+    (point)))
+
 (defun end-of-string(&optional arg)
   " "
   (re-search-forward "[ \t,]" (line-end-position) 3 arg)
-	     (if (looking-back "[,;\.\t ]") 
-                 (goto-char (- (point) 1)) 
-               (point))
-)
+  (goto-char (- (point) 1))    ;; in order to avoid use looking-back
+  (if (looking-at-p "[,;\.\t]")
+      (goto-char (point))
+  (point)))
 
 (defun go-there(arg) 
   ""
@@ -967,6 +968,47 @@ will open about_hashes.rb and goto line 8
       (setq w3m-command-arguments
                    '("-o" "http_proxy=http://127.0.0.1:8087/"))
   (setq w3m-command-arguments nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun dove-convet-tbl (start end)
+  "Convert selected list area into table in orgmode"
+  (interactive "r")
+  (query-replace-regexp "\\([a-z0-9).]\\)
+" "\\1 | " nil start end))
+
+
+(defun dove-text-to-url (&optional arg)
+  "Convert text to orgmode url"
+  (interactive "P")
+  (let ((my-point nil))
+    (if (and mark-active transient-mark-mode)
+        (progn
+          (copy-region-as-kill (mark) (point))
+          (setq my-point (point))
+          (message "trans: %s" my-point))
+      (progn
+        (copy-region-as-kill (beginning-of-string "\\]")
+;         '(lambda (&optional arg) 
+;           (re-search-backward "\\]" (line-beginning-position) 3 1)
+;           (if (looking-at "\\]")
+;               (goto-char (+ (point) 1))
+;             (point)))
+         (end-of-string))
+        (setq my-point (point))
+        (message "sele: %s" my-point)
+        ))
+;    (let ((dir (read-from-minibuffer "Input URL: " nil nil nil)))
+
+  (re-search-backward "\\[[0-9]+\\]") ;(line-beginning-position) 3 1)
+
+  (replace-match "[[file:")
+;  (insert "[file:")
+  (goto-char (+ 1 my-point))
+  (insert ".org][")
+  (yank))
+  (insert "]]")
+)
 
 (provide 'dove-ext)
 
