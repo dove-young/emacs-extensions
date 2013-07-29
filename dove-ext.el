@@ -985,25 +985,14 @@ will open about_hashes.rb and goto line 8
     (if (and mark-active transient-mark-mode)
         (progn
           (copy-region-as-kill (mark) (point))
-          (setq my-point (point))
-          (message "trans: %s" my-point))
+          (setq my-point (point)))
       (progn
-        (copy-region-as-kill (beginning-of-string "\\]")
-;         '(lambda (&optional arg) 
-;           (re-search-backward "\\]" (line-beginning-position) 3 1)
-;           (if (looking-at "\\]")
-;               (goto-char (+ (point) 1))
-;             (point)))
-         (end-of-string))
-        (setq my-point (point))
-        (message "sele: %s" my-point)
-        ))
+        (copy-region-as-kill (beginning-of-string "\\]") (end-of-string))
+        (setq my-point (point))))
 ;    (let ((dir (read-from-minibuffer "Input URL: " nil nil nil)))
 
   (re-search-backward "\\[[0-9]+\\]") ;(line-beginning-position) 3 1)
-
   (replace-match "[[file:")
-;  (insert "[file:")
   (goto-char (+ 1 my-point))
   (insert ".org][")
   (yank))
