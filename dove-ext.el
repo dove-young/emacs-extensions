@@ -989,14 +989,21 @@ will open about_hashes.rb and goto line 8
       (progn
         (copy-region-as-kill (beginning-of-string "\\]") (end-of-string))
         (setq my-point (point))))
-;    (let ((dir (read-from-minibuffer "Input URL: " nil nil nil)))
 
   (re-search-backward "\\[[0-9]+\\]") ;(line-beginning-position) 3 1)
   (replace-match "[[file:")
-  (goto-char (+ 1 my-point))
+  (goto-char (+ 2 my-point))
   (insert ".org][")
   (yank))
   (insert "]]")
+  (let ((url-str (read-from-minibuffer "Input URL: " nil nil nil)))
+    (message "%s" url-str)
+    (if (and (stringp url-str)  (string-match "^http" url-str))
+        (progn
+          (let ((buf (get-buffer-create " *pwd*")))
+            (call-process-shell-command "~/bin/msdn.filter.sh" nil buf 1 (format "'%s'" url-str))
+            (view-buffer-other-window buf)))))
+  
 )
 
 (provide 'dove-ext)
