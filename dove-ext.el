@@ -979,7 +979,15 @@ will open about_hashes.rb and goto line 8
 
 
 (defun dove-text-to-url (&optional arg)
-  "Convert text to orgmode url"
+  "Convert text to orgmode url and also fetch web page from MSDN
+
+You would highlight the text string to be converted, such as something like this:
+'[125]PowerShell.exe Command-Line Help' which would be modified into org file link:
+[[file:PowerShell.exe Command-Line Help.org][[125]PowerShell.exe Command-Line Help]]
+ 
+Then the function would ask for a URL, the web page located at the URL would be fetched
+and dumped into a local file named as 'PowerShell.exe Command-Line Help.org'"
+
   (interactive "P")
   (let ((my-point nil) (my-string nil))
     (if (and mark-active transient-mark-mode)
