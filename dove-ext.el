@@ -323,14 +323,15 @@ Automatic due with nesting {[(<\"''\">)]} characters"
 
 (defun* beginning-of-string(&optional (beg "[ \\t]"))
   "  "
-  (re-search-backward beg (line-beginning-position) 3 1)
-  (if (looking-at beg)
-      (goto-char (+ (point) 1)) 
-    (point)))
+  (let ((pt (re-search-backward beg (line-beginning-position) 3 1)))    
+    (if (looking-at beg)
+        (goto-char (+ pt 1))
+      (point))))
 
 (defun end-of-string(&optional arg)
   " "
-  (let ((pt (re-search-forward ".$\\|[ \t,;]" (line-end-position) t arg) ))
+  (interactive "P")
+  (let ((pt (re-search-forward ".$\\|[ \t,;]" (line-end-position) 3 arg)))
     (goto-char (- pt 1))   ;; backward 1 char to avoid to include [ \t,;]
   (if (looking-at-p "\\w") ;; move backword in order to avoid use =looking-back=
       (goto-char pt)
@@ -801,31 +802,34 @@ Parenthesis character was defined by beginning-of-parenthesis"
   (dove-org-babel-shortcut-para "#+begin_src " "#+end_src" arg))
 
 
-(defmacro dove-org-babel-shortcut (St Ed x)
+(defmacro dove-org-babel-shortcut (x &optional arg)
   `(cond
    ((and mark-active transient-mark-mode)
-    (i-babel-quote-str ,St ,Ed ,x))
+    (let* ((mark (mark)) (point (point))
+           (St (min mark point))
+           (Ed (max mark point)))
+          (i-babel-quote-str St Ed ,x)))
    (t
-    (let ((St (and (beginning-of-string) (point)))
-          (Ed (and (end-of-string) (point))))
-      (i-babel-quote-str ,St ,Ed ,x)))))
+    (let ((St (beginning-of-string))
+           (Ed (end-of-string arg)))
+      (i-babel-quote-str St Ed ,x)))))
 
+;(macroexpand '(dove-org-babel-shortcut "*" 2))
+; (macroexpand '(dove-org-babel-shortcut St Ed x))
 
-(macroexpand '(dove-org-babel-shortcut St Ed x))
-
-(defun i= (St Ed)
+(defun i= (&optional arg)
   "Set string-at-point to =string-at-point= 
 
 Used in org-mode. For arbitrary content, select them first"
-  (interactive "r")
-  (dove-org-babel-shortcut St Ed "="))
+  (interactive "P")
+  (dove-org-babel-shortcut "=" arg))
 
-(defun i* (St Ed)
+(defun i* (&optional arg)
   "Set string-at-point to *string-at-point*
 
 Used in org-mode. For arbitrary content, select them first"
-  (interactive "r")
-  (dove-org-babel-shortcut St Ed "*"))
+  (interactive "P")
+  (dove-org-babel-shortcut "*" arg))
 
 (defun i: (&optional arg)
   "Insert ': ' at each line of code
