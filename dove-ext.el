@@ -330,11 +330,11 @@ Automatic due with nesting {[(<\"''\">)]} characters"
 
 (defun end-of-string(&optional arg)
   " "
-  (re-search-forward "[ \t,]" (line-end-position) 3 arg)
-  (goto-char (- (point) 1))    ;; in order to avoid use looking-back
-  (if (looking-at-p "[,;\.\t]")
-      (goto-char (point))
-  (point)))
+  (let ((pt (re-search-forward ".$\\|[ \t,;]" (line-end-position) t arg) ))
+    (goto-char (- pt 1))   ;; backward 1 char to avoid to include [ \t,;]
+  (if (looking-at-p "\\w") ;; move backword in order to avoid use =looking-back=
+      (goto-char pt)
+  (point))))
 
 (defun go-there(arg) 
   ""
