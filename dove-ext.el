@@ -986,21 +986,15 @@ and dumped into a local file named as 'PowerShell.exe Command-Line Help.org"
   (interactive "P")
   (let ((my-point nil) (my-string nil))
     (if (and mark-active transient-mark-mode)
-        (progn
-          (let* ((st (min (mark) (point)))
-                 (ed (max (mark) (point)))
-                 (my-point ed))
-            (copy-region-as-kill st ed)))
-      (progn
-        (copy-region-as-kill (beginning-of-string "\\]") (end-of-string))
-        (setq my-point (point))))
+        (let* ((st (min (mark) (point)))
+               (ed (max (mark) (point))))
+          (kill-region st ed))
+      (kill-region (beginning-of-string "\\]") (end-of-string)))
+
     (setq my-string (car kill-ring))
     (re-search-backward "\\[[0-9]+\\]" (line-beginning-position) 3 1)
-    (let ((prefix "[[file:")
-          (delta (length (match-string 0))))
-      (replace-match prefix)
-      (goto-char (+ my-point (- (length prefix) delta)))  ; back to the point before replace
-      (insert (concat ".org][" my-string "]]")))
+    (replace-match "")
+    (insert (concat "[[file:" my-string ".org][" my-string "]]"))
 
     (let ((url-str (read-from-minibuffer "Input URL: " nil nil nil))  ; read url here
           (dir (file-name-directory (buffer-file-name))))
@@ -1010,7 +1004,7 @@ and dumped into a local file named as 'PowerShell.exe Command-Line Help.org"
               (call-process-shell-command "~/bin/msdn.filter.sh" nil buf 1 (format "'%s'" url-str))
               (view-buffer-other-window buf)
               (write-file (format "%s%s.org" dir my-string) t)
-             ))))))
+              ))))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
