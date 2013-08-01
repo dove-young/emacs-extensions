@@ -934,9 +934,8 @@ Used in org-mode. For operating on multiple lines, use prefix argument"
 (defun find-file-and-goto-line (&optional arg)
   "find a file and goto specific line
 
-(find-file-and-goto-line \"/home/dove/org/rubykoans/koans/about_hashes.rb:8\")
-will open about_hashes.rb and goto line 8
-"
+\(find-file-and-goto-line '/home/dove/org/rubykoans/koans/about_hashes.rb:8'\)
+will open about_hashes.rb and goto line 8"
   (interactive)
   (let* ((file-name (buffer-substring-no-properties
                      (beginning-of-string)
@@ -973,24 +972,16 @@ will open about_hashes.rb and goto line 8
                    '("-o" "http_proxy=http://127.0.0.1:8087/"))
   (setq w3m-command-arguments nil)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun dove-convet-tbl (start end)
-  "Convert selected list area into table in orgmode"
-  (interactive "r")
-  (query-replace-regexp "\\([a-z0-9).]\\)
-" "\\1 | " nil start end))
-
 
 (defun dove-text-to-url (&optional arg)
   "Convert text to orgmode url and also fetch web page from MSDN
 
 You would highlight the text string to be converted, such as something like this:
-'[125]PowerShell.exe Command-Line Help' which would be modified into org file link:
-[[file:PowerShell.exe Command-Line Help.org][[125]PowerShell.exe Command-Line Help]]
+\\[125]PowerShell.exe Command-Line Help' which would be modified into org file link:
+\\[\\[file:PowerShell.exe Command-Line Help.org][[125]PowerShell.exe Command-Line Help]]
  
 Then the function would ask for a URL, the web page located at the URL would be fetched
-and dumped into a local file named as 'PowerShell.exe Command-Line Help.org'"
+and dumped into a local file named as 'PowerShell.exe Command-Line Help.org"
 
   (interactive "P")
   (let ((my-point nil) (my-string nil))
@@ -1017,6 +1008,14 @@ and dumped into a local file named as 'PowerShell.exe Command-Line Help.org'"
               (write-file (format "%s%s.org" dir my-string) t)
               ))))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun dove-convet-tbl (start end)
+  "Convert selected list area into table in orgmode"
+  (interactive "r")
+  (query-replace-regexp "\\([a-z0-9).]\\)
+" "\\1 | " nil start end))
+
+
 (provide 'dove-ext)
-
-
