@@ -30,10 +30,6 @@
   (require 'cl))
 (require 'cl)
 
-(defun get-point (symbol &optional arg)
- "get the point"
-     (progn (funcall symbol arg) (point)))
-
 
 (defun test-get-point (&optional arg)
   "test-get-point"
@@ -243,6 +239,10 @@
 	    (end (get-point end-of-thing arg)))
 	(copy-region-as-kill beg end)))
 
+(defun get-point (symbol &optional arg)
+ "get the point"
+     (progn (funcall symbol arg) (point)))
+
 (defun paste-to-mark(condition &optional arg)
   "Paste things to mark, or to the prompt in shell-mode"
   (let ((paste 
@@ -290,6 +290,21 @@
     (copy-thing 'beginning-of-string 'end-of-string arg))
   (paste-to-mark 'dove-paste-condition arg))
 
+(defun* beginning-of-string(&optional arg (beg "[ \t]"))
+  "  "
+  (let ((pt (re-search-backward "[ \t]" (line-beginning-position) 3 1)))
+    (if (looking-at beg)
+        (goto-char (+ pt 1))
+      (point))))
+
+(defun end-of-string(&optional arg)
+  " "
+  (let ((pt (re-search-forward ".$\\|[ \t,;]" (line-end-position) 3 arg)))
+    (goto-char (- pt 1))   ;; backward 1 char to avoid to include [ \t,;]
+  (if (looking-at-p "\\w") ;; move backword in order to avoid use =looking-back=
+      (goto-char pt)
+  (point))))
+
 (defun thing-copy-parenthesis-to-mark(&optional arg)
  "Copy region between {[(<\"''\">)]} and paste them to mark
 
@@ -319,23 +334,6 @@ Automatic due with nesting {[(<\"''\">)]} characters"
     (delete-region beg end)
     )
 )
-
-
-(defun* beginning-of-string(&optional (beg "[ \\t]"))
-  "  "
-  (let ((pt (re-search-backward beg (line-beginning-position) 3 1)))    
-    (if (looking-at beg)
-        (goto-char (+ pt 1))
-      (point))))
-
-(defun end-of-string(&optional arg)
-  " "
-  (interactive "P")
-  (let ((pt (re-search-forward ".$\\|[ \t,;]" (line-end-position) 3 arg)))
-    (goto-char (- pt 1))   ;; backward 1 char to avoid to include [ \t,;]
-  (if (looking-at-p "\\w") ;; move backword in order to avoid use =looking-back=
-      (goto-char pt)
-  (point))))
 
 (defun go-there(arg) 
   ""
